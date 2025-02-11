@@ -31,8 +31,9 @@ function emu_check_for_updates_manual() {
         exit;
     }
 
-    // Processa a resposta da API
-    $data = json_decode(wp_remote_retrieve_body($response));
+    // Depuração: Verificar resposta da API
+    $response_body = wp_remote_retrieve_body($response);
+    $data = json_decode($response_body);
 
     // Verifica se a resposta contém a tag da versão
     if (isset($data->tag_name)) {
@@ -43,6 +44,8 @@ function emu_check_for_updates_manual() {
 
         // Remove o prefixo "v" da versão do GitHub (se houver)
         $github_version = ltrim($data->tag_name, 'v');
+
+       
 
         if (version_compare($github_version, $current_version, '>')) {
             wp_redirect(admin_url('plugins.php?plugin_status=all&message=Nova versão disponível! Verifique a atualização.'));
@@ -77,8 +80,10 @@ function emu_check_for_plugin_update($transient) {
         return $transient;
     }
 
-    // Processa a resposta da API
-    $data = json_decode(wp_remote_retrieve_body($response));
+    // Depuração: Verificar resposta da API
+    $response_body = wp_remote_retrieve_body($response);
+    error_log($response_body); // Adiciona para depurar
+    $data = json_decode($response_body);
 
     // Se a resposta contiver a tag da versão
     if (isset($data->tag_name)) {
@@ -88,6 +93,10 @@ function emu_check_for_plugin_update($transient) {
         $plugin_file = plugin_dir_path(__FILE__) . '../emu-product-gallery.php';
         $plugin_data = get_plugin_data($plugin_file);
         $current_version = $plugin_data['Version'];
+
+        // Depuração: Verificar versão atual e versão do GitHub
+        error_log("Versão Atual: " . $current_version);
+        error_log("Versão GitHub: " . $github_version);
 
         // Se a versão do GitHub for maior, registra a atualização
         if (version_compare($github_version, $current_version, '>')) {
