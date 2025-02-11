@@ -8,6 +8,7 @@ Author: Angard Agency
 Author URI: https://aganrdagency.com
 */
 require_once plugin_dir_path(__FILE__) . 'includes/update.php';
+require_once plugin_dir_path(__FILE__) . 'includes/metaboxes.php';
 // Enfileirando o CSS e o JS do plugin
 function emu_product_gallery_enqueue_assets() {
     // Enfileira o CSS do Swiper
@@ -33,4 +34,3 @@ function emu_product_gallery_include_slider_shortcode() {
 }
 
 add_action('init', 'emu_product_gallery_include_slider_shortcode');
-

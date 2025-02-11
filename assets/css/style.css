@@ -6,11 +6,12 @@
     margin: 0 auto;
 }
 
-.emu-main-slider video, .emu-main-slider img {
+.emu-main-slider video, .emu-main-slider img, .emu-main-slider iframe {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 0px;
+    aspect-ratio: 1 !important;
 }
 
 /* Slider de Thumbnails */
@@ -29,7 +30,7 @@
 }
 
 .emu-thumb-slider .swiper-slide {
-    width: 100%!important; /* Garante que as imagens ou itens ocupem o espaço da coluna */
+    width: 100% !important; /* Garante que as imagens ou itens ocupem o espaço da coluna */
     aspect-ratio: 1; /* Mantém a proporção das thumbnails */
     cursor: pointer;
     transition: border 0.3s ease-in-out;
@@ -46,12 +47,14 @@
     height: 100%;
     object-fit: cover;
     border-radius: 0px;
+    aspect-ratio: 1 !important;
+    cursor: pointer !important;
 }
 
 /* Estilizando as setas de navegação */
-.emu-swiper-button-next, .emu-swiper-button-prev {
+.emu-main-slider .swiper-button-next, .emu-main-slider .swiper-button-prev {
     color: white;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.7);
     border-radius: 0%;
     cursor: pointer;
     aspect-ratio: 1/1;

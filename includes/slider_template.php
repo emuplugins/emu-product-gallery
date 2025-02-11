@@ -1,9 +1,14 @@
-<?php 
+<?php
 function emu_product_gallery_shortcode($atts) {
     // Obtém o valor do atributo 'media' (links ou IDs separados por vírgula)
     $atts = shortcode_atts(array(
         'media' => '', // Valor padrão vazio
     ), $atts);
+
+    // Verifica se o parâmetro 'media' está vazio e retorna uma mensagem
+    if (empty($atts['media'])) {
+        return 'Insira o id ou url do arquivo no campo media="" do shortcode';
+    }
 
     // Divide os links ou IDs passados por vírgula
     $media = explode(',', $atts['media']);
@@ -112,9 +117,10 @@ function emu_product_gallery_shortcode($atts) {
     // Retorna o HTML e o script para inicializar os sliders com thumbs
     return '<div style="overflow:hidden; position:relative">
 
-        <div class="swiper-container emu-main-slider">
+        <div class="swiper-container emu-main-slider" style="position:relative">
             <div class="swiper-wrapper">
                 ' . $slides_html . '
+            
             </div>
             <div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>

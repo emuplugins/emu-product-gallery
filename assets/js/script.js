@@ -33,11 +33,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Garante que as setas de navegação fiquem sempre ativas
-    function emuUpdateNavigationState() {
-        document.querySelector('.swiper-button-next')?.classList.remove('swiper-button-disabled');
-        document.querySelector('.swiper-button-prev')?.classList.remove('swiper-button-disabled');
-    }
+        // Garante que as setas de navegação fiquem sempre ativas
+        function emuUpdateNavigationState() {
+            // Remover a classe de desabilitado das setas
+            document.querySelector('.swiper-button-next')?.classList.remove('swiper-button-disabled');
+            document.querySelector('.swiper-button-prev')?.classList.remove('swiper-button-disabled');
+        }
 
     // Atualiza os índices dos slides
     function emuUpdateIndices() {
@@ -86,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // E configure o evento de clique nas miniaturas
     document.querySelectorAll('.emu-thumb-slider .swiper-slide').forEach((thumb, index) => {
         thumb.addEventListener('click', function () {
+            emuPauseMedia(); // Pausa a mídia antes de mudar o slide
             emuMainSlider.slideTo(index); // Muda o slide principal para o índice da miniatura clicada
         });
     });
