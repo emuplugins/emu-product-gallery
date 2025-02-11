@@ -34,3 +34,18 @@ function emu_product_gallery_include_slider_shortcode() {
 }
 
 add_action('init', 'emu_product_gallery_include_slider_shortcode');
+
+
+
+// Inclua o arquivo do Update Checker, se ainda não tiver feito isso
+require 'plugin-update-checker/plugin-update-checker.php'; // ajuste o caminho para onde está o arquivo
+
+// Crie uma instância do plugin update checker
+$myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+    'https://github.com/tonnynho2004/emu-product-gallery', // URL do repositório no GitHub
+    __FILE__, // Caminho do arquivo principal do seu plugin
+    'emu-product-gallery' // O slug do seu plugin
+);
+
+// Define o branch (caso você esteja usando um branch diferente de "master")
+$myUpdateChecker->setBranch('main'); // Substitua "main" pelo seu branch se necessário
