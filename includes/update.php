@@ -1,4 +1,5 @@
 <?php
+
 // Adiciona o link para verificar atualizações manualmente na página de plugins
 function emu_add_update_check_button($links, $file) {
     // Verifica se é o plugin correto
@@ -31,21 +32,18 @@ function emu_check_for_updates_manual() {
         exit;
     }
 
-    // Depuração: Verificar resposta da API
-    $response_body = wp_remote_retrieve_body($response);
-    $data = json_decode($response_body);
+    // Processa a resposta da API
+    $data = json_decode(wp_remote_retrieve_body($response));
 
     // Verifica se a resposta contém a tag da versão
     if (isset($data->tag_name)) {
-        // Obter os dados do plugin: como este arquivo está em /includes, precisamos subir um nível
+        // Obter os dados do plugin
         $plugin_file = plugin_dir_path(__FILE__) . '../emu-product-gallery.php';
         $plugin_data = get_plugin_data($plugin_file);
         $current_version = $plugin_data['Version'];
 
         // Remove o prefixo "v" da versão do GitHub (se houver)
         $github_version = ltrim($data->tag_name, 'v');
-
-       
 
         if (version_compare($github_version, $current_version, '>')) {
             wp_redirect(admin_url('plugins.php?plugin_status=all&message=Nova versão disponível! Verifique a atualização.'));
@@ -80,31 +78,55 @@ function emu_check_for_plugin_update($transient) {
         return $transient;
     }
 
-    // Depuração: Verificar resposta da API
-    $response_body = wp_remote_retrieve_body($response);
-    error_log($response_body); // Adiciona para depurar
-    $data = json_decode($response_body);
+    // Processa a resposta da API
+    $data = json_decode(wp_remote_retrieve_body($response));
 
     // Se a resposta contiver a tag da versão
     if (isset($data->tag_name)) {
         $github_version = ltrim($data->tag_name, 'v');
 
-        // Obter os dados do plugin (subindo um nível, pois este arquivo está em /includes)
+        // Obter os dados do plugin
         $plugin_file = plugin_dir_path(__FILE__) . '../emu-product-gallery.php';
         $plugin_data = get_plugin_data($plugin_file);
         $current_version = $plugin_data['Version'];
 
-        // Depuração: Verificar versão atual e versão do GitHub
-        error_log("Versão Atual: " . $current_version);
-        error_log("Versão GitHub: " . $github_version);
-
         // Se a versão do GitHub for maior, registra a atualização
         if (version_compare($github_version, $current_version, '>')) {
+            // Agora lidando com o arquivo ZIP da versão mais recente
+            $zip_url = 'https://github.com/tonnynho2004/emu-product-gallery/archive/refs/tags/' . $data->tag_name . '.zip';
+            $zip_temp_path = WP_CONTENT_DIR . '/uploads/emu-product-gallery-update.zip';
+
+            // Baixar o arquivo ZIP
+            $zip_response = wp_remote_get($zip_url);
+            if (is_wp_error($zip_response)) {
+                return $transient;
+            }
+
+            file_put_contents($zip_temp_path, wp_remote_retrieve_body($zip_response));
+
+            // Descompacta o arquivo
+            $zip = new ZipArchive;
+            if ($zip->open($zip_temp_path) === TRUE) {
+                $zip->extractTo(WP_PLUGIN_DIR);
+                $zip->close();
+
+                // Remove o arquivo ZIP após a extração
+                unlink($zip_temp_path);
+
+                // Obtém o nome da pasta extraída
+                $extracted_folder = WP_PLUGIN_DIR . '/emu-product-gallery-' . $github_version;
+
+                // Renomeia a pasta extraída para o nome correto
+                if (is_dir($extracted_folder)) {
+                    rename($extracted_folder, WP_PLUGIN_DIR . '/emu-product-gallery');
+                }
+            }
+
             $transient->response['emu-product-gallery/emu-product-gallery.php'] = (object)array(
                 'slug'        => 'emu-product-gallery',
                 'new_version' => $github_version,
                 'url'         => 'https://github.com/tonnynho2004/emu-product-gallery',
-                'package'     => 'https://github.com/tonnynho2004/emu-product-gallery/archive/refs/tags/' . $data->tag_name . '.zip'
+                'package'     => $zip_url
             );
         }
     }
