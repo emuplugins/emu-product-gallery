@@ -1,8 +1,8 @@
 {
-  "name": "Emu Product Gallery",
-  "version": "1.0.2",
-  "download_url": "https://github.com/tonnynho2004/emu-product-gallery/releases/latest/download/emu-product-gallery.zip",
-  "sections": {
-    "description": "Um plugin para exibir sliders de galeria de imagens e vídeos do YouTube. Você pode usar HTML nesta descrição."
-  }
+    "name": "Emu Product Gallery",
+    "version": "1.0.3",
+    "download_url": "https://github.com/tonnynho2004/emu-product-gallery/archive/refs/heads/main.zip",
+    "sections": {
+        "description": "Um plugin para exibir sliders de galeria de imagens e vídeos do YouTube."
+    }
 }
