@@ -31,3 +31,12 @@ function emu_check_for_updates($transient) {
     return $transient;
 }
 add_filter('site_transient_update_plugins', 'emu_check_for_updates');
+
+// Adiciona um link para verificar atualizações no plugin
+function emu_add_update_check_link($links, $file) {
+    if ('emu-product-gallery/emu-product-gallery.php' === $file) {
+        $links[] = '<a href="' . esc_url('https://github.com/tonnynho2004/emuproductgallery/releases/latest') . '" target="_blank">Verificar Atualização</a>';
+    }
+    return $links;
+}
+add_filter('plugin_action_links', 'emu_add_update_check_link', 10, 2);
