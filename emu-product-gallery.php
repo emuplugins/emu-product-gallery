@@ -33,3 +33,21 @@ function emu_product_gallery_include_slider_shortcode() {
 }
 
 add_action('init', 'emu_product_gallery_include_slider_shortcode');
+
+
+
+// Inclui o Plugin Update Checker
+require plugin_dir_path(__FILE__) . 'plugin-update-checker/plugin-update-checker.php';
+
+// Configuração do Update Checker
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
+$myUpdateChecker = PucFactory::buildUpdateChecker(
+    'https://github.com/tonnynho2004/emu-product-gallery/details.json', // URL do repositório
+    __FILE__, // Arquivo principal do plugin
+    'emu-product-gallery' // Slug do plugin
+);
+
+// Habilita a verificação de versões a partir das releases do GitHub
+$updateChecker->setBranch('main'); // Se o branch principal for outro, altere aqui
+$updateChecker->getVcsApi()->enableReleaseAssets();
