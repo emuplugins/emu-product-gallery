@@ -1,1 +1,64 @@
+/* Estilos do Slider Principal */
+.emu-main-slider {
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 1;
+    margin: 0 auto;
+}
 
+.emu-main-slider video, .emu-main-slider img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0px;
+}
+
+/* Slider de Thumbnails */
+.emu-thumb-slider {
+    margin-top: 15px;
+    max-width: 100%;
+    height: fit-content;
+    margin: 20px auto;
+}
+
+.emu-thumb-slider .swiper-wrapper {
+    display: grid;
+    gap: 0.15%;
+    grid-template-columns: repeat(40, calc(2.5% - 0.15%)); /* Ajusta para 40 colunas proporcionais */
+    width: 1010%;
+}
+
+.emu-thumb-slider .swiper-slide {
+    width: 100%!important; /* Garante que as imagens ou itens ocupem o espaço da coluna */
+    aspect-ratio: 1; /* Mantém a proporção das thumbnails */
+    cursor: pointer;
+    transition: border 0.3s ease-in-out;
+    opacity: 0.4;
+    box-sizing: border-box; /* Garante que o padding não afete o tamanho */
+}
+
+.emu-thumb-slider .swiper-slide-thumb-active {
+    opacity: 1;
+}
+
+.emu-thumb-slider img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0px;
+}
+
+/* Estilizando as setas de navegação */
+.emu-swiper-button-next, .emu-swiper-button-prev {
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 0%;
+    cursor: pointer;
+    aspect-ratio: 1/1;
+    width: 70px;
+    height: auto;
+}
+
+.emu-swiper-button-next:hover, .emu-swiper-button-prev:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
