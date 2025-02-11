@@ -3,7 +3,7 @@
 Plugin Name: Emu Product Gallery
 Plugin URI: https://example.com/emu-product-gallery
 Description: Um plugin para exibir sliders de galeria de imagens e vídeos do YouTube.
-Version: 1.0.2
+Version: 1.0.3
 Author: Angard Agency
 Author URI: https://aganrdagency.com
 */
@@ -36,18 +36,15 @@ add_action('init', 'emu_product_gallery_include_slider_shortcode');
 
 
 
-// Inclui o Plugin Update Checker
+
+
+// Inclui o arquivo do Plugin Update Checker
 require plugin_dir_path(__FILE__) . 'plugin-update-checker/plugin-update-checker.php';
 
-// Configuração do Update Checker
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $myUpdateChecker = PucFactory::buildUpdateChecker(
-    'https://github.com/tonnynho2004/emu-product-gallery/details.json', // URL do repositório
-    __FILE__, // Arquivo principal do plugin
-    'emu-product-gallery' // Slug do plugin
+    'https://raw.githubusercontent.com/tonnynho2004/emu-product-gallery/main/details.json', // URL direta do details.json
+    __FILE__,
+    'emu-product-gallery'
 );
-
-// Habilita a verificação de versões a partir das releases do GitHub
-$updateChecker->setBranch('main'); // Se o branch principal for outro, altere aqui
-$updateChecker->getVcsApi()->enableReleaseAssets();
