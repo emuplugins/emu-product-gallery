@@ -4,6 +4,7 @@
     max-width: 100%;
     aspect-ratio: 1;
     margin: 0 auto;
+	position:relative
 }
 
 .emu-main-slider video, .emu-main-slider img, .emu-main-slider iframe {
@@ -79,6 +80,7 @@
     aspect-ratio: 1/1;
     width: 70px;
     height: auto;
+	top:50%!important
 }
 
 .emu-swiper-button-next:hover, .emu-swiper-button-prev:hover {
