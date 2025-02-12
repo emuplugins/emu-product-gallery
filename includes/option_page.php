@@ -77,10 +77,18 @@ function emu_product_gallery_checkbox() {
 function sanitize_emu_product_gallery_posttypes($input) {
     // Ensure we only keep valid post types in the array
     $valid_post_types = get_post_types(array('public' => true), 'names');
+    
+    // If no post types are selected, delete the option from the database
+    if (empty($input)) {
+        delete_option('emu_product_gallery_posttypes');
+        return $input; // Return an empty array to avoid saving anything
+    }
+
+    // Filter the input to keep only valid post types
     $input = array_filter($input, function($type) use ($valid_post_types) {
         return in_array($type, $valid_post_types);
     });
-    
+
     // Return the sanitized array
     return array_values($input); // Re-index the array to avoid any gaps
 }
