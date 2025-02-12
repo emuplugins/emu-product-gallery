@@ -45,7 +45,7 @@ jQuery(function($) {
     
     // Initialize the main slider without using automatic navigation
     mainSwiper = new Swiper('.emu-main-slider', {
-      spaceBetween: 10,
+      spaceBetween: 0,
       thumbs: {
         swiper: thumbSwiper
       },
