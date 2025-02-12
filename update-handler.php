@@ -50,7 +50,7 @@ class Emu_Product_Gallery_Updater {
             return $transient;
         }
 
-        $current_version = get_plugin_data(__FILE__)['Version'];
+        $current_version = get_plugin_data(__DIR__ . '/emu-product-gallery.php')['Version'];
         if (version_compare($current_version, $plugin_info->version, '<')) {
             $transient->response['emu-product-gallery/emu-product-gallery.php'] = (object) [
                 'slug'        => $plugin_info->slug,
@@ -61,7 +61,6 @@ class Emu_Product_Gallery_Updater {
                 'requires'    => $plugin_info->requires
             ];
         }
-
         return $transient;
     }
 }
