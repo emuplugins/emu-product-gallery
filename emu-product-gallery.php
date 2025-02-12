@@ -3,7 +3,7 @@
 Plugin Name: Emu Product Gallery
 Plugin URI: https://example.com/emu-product-gallery
 Description: Um plugin para exibir sliders de galeria de imagens e vídeos do YouTube.
-Version: 1.0.7
+Version: 1.0.8
 Author: Angard Agency
 Author URI: https://aganrdagency.com
 */
