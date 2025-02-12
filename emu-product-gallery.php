@@ -7,6 +7,7 @@ Version: 1.0.3
 Author: Angard Agency
 Author URI: https://aganrdagency.com
 */
+require_once plugin_dir_path(__FILE__) . 'update-handler.php';
 require_once plugin_dir_path(__FILE__) . 'includes/metaboxes.php';
 // Enfileirando o CSS e o JS do plugin
 function emu_product_gallery_enqueue_assets() {
@@ -33,18 +34,3 @@ function emu_product_gallery_include_slider_shortcode() {
 }
 
 add_action('init', 'emu_product_gallery_include_slider_shortcode');
-
-
-
-
-
-// Inclui o arquivo do Plugin Update Checker
-require plugin_dir_path(__FILE__) . 'plugin-update-checker/plugin-update-checker.php';
-
-use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
-
-$myUpdateChecker = PucFactory::buildUpdateChecker(
-    'https://raw.githubusercontent.com/tonnynho2004/emu-product-gallery/main/details.json', // URL direta do details.json
-    __FILE__,
-    'emu-product-gallery'
-);
