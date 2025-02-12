@@ -3,15 +3,16 @@
 // Retrieves the selected post types and uses them in the metabox code
 function emu_product_gallery_add_metabox() {
     // Retrieves the selected post types from the Options Page, ensuring it's an array
-    $post_types = (array) get_option('emu_product_gallery_posttypes', array());
+    $emu_post_types = (array) get_option('emu_product_gallery_posttypes', array());
 
     // Verifies if there are selected post types before adding the metabox
-    if (!empty($post_types) && is_array($post_types)) {
+    // Ensures that the array is not empty and contains valid post types
+    if (!empty($emu_post_types) && count(array_filter($emu_post_types)) > 0) {
         add_meta_box(
             'gallery_video_metabox',            // Metabox ID
             'Image and Video Gallery',          // Title
             'display_metabox_gallery_video',    // Function to display the content
-            $post_types,                        // Selected post types
+            $emu_post_types,                   // Selected post types
             'normal',                           // Context
             'high'                              // Priority
         );
