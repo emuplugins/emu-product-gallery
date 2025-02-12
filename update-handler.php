@@ -1,5 +1,5 @@
 <?php
-
+echo "atualizado";
 class Emu_Product_Gallery_Updater {
     private $api_url = 'https://raw.githubusercontent.com/tonnynho2004/emu-product-gallery/refs/heads/main/info.json';
 
