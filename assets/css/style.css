@@ -14,6 +14,9 @@
     aspect-ratio: 1 !important;
 }
 
+.emu-product-gallery-wrapper .swiper-slide {
+  aspect-ratio:1!important;
+}
 .emu-product-gallery-wrapper .emu-main-slider .swiper-wrapper {
     box-sizing: content-box;
     display: grid;
