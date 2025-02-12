@@ -32,8 +32,8 @@ function emu_product_gallery_options() {
     // Registers the options field to save
     register_setting(
         'emu_product_gallery_group',        // Settings group
-        'emu_product_gallery_posttypes',              // Option name
-        'sanitize_text_field'               // Sanitization function
+        'emu_product_gallery_posttypes',    // Option name
+        'sanitize_emu_product_gallery_posttypes' // Custom sanitization function
     );
 }
 add_action('admin_menu', 'emu_product_gallery_options');
@@ -73,3 +73,14 @@ function emu_product_gallery_checkbox() {
     }
 }
 
+// Custom sanitization function to filter and save only selected values
+function sanitize_emu_product_gallery_posttypes($input) {
+    // Ensure we only keep valid post types in the array
+    $valid_post_types = get_post_types(array('public' => true), 'names');
+    $input = array_filter($input, function($type) use ($valid_post_types) {
+        return in_array($type, $valid_post_types);
+    });
+    
+    // Return the sanitized array
+    return array_values($input); // Re-index the array to avoid any gaps
+}
