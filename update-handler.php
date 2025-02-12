@@ -1,5 +1,4 @@
 <?php
-echo "atualizado";
 class Emu_Product_Gallery_Updater {
     private $api_url = 'https://raw.githubusercontent.com/tonnynho2004/emu-product-gallery/refs/heads/main/info.json';
 
@@ -81,7 +80,7 @@ new Emu_Product_Gallery_Updater();
 
 add_action('admin_notices', function() {
     // Exibe o diretório do arquivo do plugin
-    var_dump(basename(__DIR__)); // Verifique se o caminho completo está correto
+    var_dump("oiiiiii"); // Verifique se o caminho completo está correto
 });
 
 add_filter('plugin_action_links_emu-product-gallery/emu-product-gallery.php', function($actions) {
