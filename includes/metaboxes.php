@@ -3,7 +3,7 @@
 // Retrieves the selected post types and uses them in the metabox code
 function emu_product_gallery_add_metabox() {
     // Retrieves the selected post types from the Options Page
-    $post_types = get_option('post_types_selected', array());
+    $post_types = get_option('selected_post_types', array());
 
     if (!empty($post_types)) {
         add_meta_box(
