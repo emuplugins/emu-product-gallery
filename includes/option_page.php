@@ -22,7 +22,7 @@ function emu_product_gallery_options() {
 
     // Adds the checkbox field
     add_settings_field(
-        'post_types_selected',              // Field ID
+        'selected_post_types',              // Field ID
         'Select Post Types',                // Field title
         'emu_product_gallery_checkbox',     // Field display function
         'emu-product-gallery-options',      // Page slug
@@ -60,13 +60,13 @@ function emu_product_gallery_checkbox() {
     $post_types = get_post_types(array('public' => true), 'names');
 
     // Retrieves the selected post types from the Options Page
-    $selected = get_option('post_types_selected', array());
+    $selected = get_option('selected_post_types', array());
 
     foreach ($post_types as $type) {
         // Creates a checkbox for each post type
         ?>
         <label>
-            <input type="checkbox" name="post_types_selected[]" value="<?php echo esc_attr($type); ?>" <?php checked(in_array($type, $selected)); ?>>
+            <input type="checkbox" name="selected_post_types[]" value="<?php echo esc_attr($type); ?>" <?php checked(in_array($type, $selected)); ?>>
             <?php echo esc_html($type); ?>
         </label><br>
         <?php
