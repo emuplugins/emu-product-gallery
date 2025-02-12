@@ -68,23 +68,23 @@ class Emu_Product_Gallery_Updater {
 new Emu_Product_Gallery_Updater();
 
 add_filter('plugin_action_links_emu-product-gallery/emu-product-gallery.php', function($actions) {
-    // Usa basename(__DIR__) para pegar apenas o nome da pasta
+    // Use basename(__DIR__) to get only the folder name
     $slug = basename(__DIR__); // Ex: emu-product-gallery
     
-    // Cria a URL para forçar a verificação de atualização
+    // Create the URL to force the update check
     $url = wp_nonce_url(admin_url("plugins.php?force-check-update=$slug"), "force_check_update_$slug");
-    // Adiciona o link de verificação de atualização
-    $actions['check_update'] = '<a href="' . esc_url($url) . '">Verificar Atualização</a>';
+    // Add the update check link
+    $actions['check_update'] = '<a href="' . esc_url($url) . '">Check for Update</a>';
     return $actions;
 });
 
 add_action('admin_init', function() {
-    // Obtém o slug corretamente
+    // Get the correct slug
     $slug = basename(__DIR__);
     if (isset($_GET['force-check-update']) && $_GET['force-check-update'] === $slug) {
         check_admin_referer("force_check_update_$slug");
 
-        // Força o WordPress a verificar atualizações
+        // Force WordPress to check for updates
         delete_site_transient('update_plugins');
         wp_safe_redirect(admin_url("plugins.php?checked-update=$slug"));
         exit;
@@ -92,22 +92,22 @@ add_action('admin_init', function() {
 });
 
 add_action('admin_notices', function() {
-    // Obtém o slug corretamente
+    // Get the correct slug
     $slug = basename(__DIR__);
     if (isset($_GET['checked-update']) && $_GET['checked-update'] === $slug) {
-        echo '<div class="updated"><p>Verificação de atualização concluída! Se houver uma nova versão, ela aparecerá em breve.</p></div>';
+        echo '<div class="updated"><p>Update check completed! If there is a new version, it will appear soon.</p></div>';
     }
 });
 
 add_filter('upgrader_post_install', function($response, $hook_extra, $result) {
     global $wp_filesystem;
 
-    // Obtém o slug correto da pasta
+    // Get the correct plugin folder slug
     $current_plugin_slug = basename(__DIR__);
     $proper_destination = WP_PLUGIN_DIR . '/' . $current_plugin_slug;
     $new_plugin_dir = WP_PLUGIN_DIR . '/' . basename($result['destination']);
 
-    // Se o nome da pasta estiver errado, renomeia corretamente
+    // If the folder name is wrong, rename it correctly
     if ($new_plugin_dir !== $proper_destination) {
         $wp_filesystem->move($new_plugin_dir, $proper_destination);
     }
@@ -116,25 +116,25 @@ add_filter('upgrader_post_install', function($response, $hook_extra, $result) {
 }, 10, 3);
 
 /**
- * Tenta reativar automaticamente o plugin após a atualização.
+ * Attempts to automatically reactivate the plugin after an update.
  *
- * Se o plugin foi atualizado e estava ativo antes, essa função o reativa.
+ * If the plugin was updated and was active before, this function reactivates it.
  */
 function auto_reactivate_plugin_after_update($upgrader_object, $options) {
     if (isset($options['action'], $options['type']) && 
         $options['action'] === 'update' && 
         $options['type'] === 'plugin') {
 
-        // Especifique o caminho relativo do arquivo principal do plugin
+        // Specify the relative path of the main plugin file
         $plugin_file = 'emu-product-gallery/emu-product-gallery.php';
 
-        // Verifica se o nosso plugin está na lista de plugins atualizados
+        // Check if our plugin is in the list of updated plugins
         if (in_array($plugin_file, $options['plugins'])) {
-            // Se o plugin não estiver ativo, tenta reativá-lo
+            // If the plugin is not active, try to reactivate it
             if (!is_plugin_active($plugin_file)) {
                 $result = activate_plugin($plugin_file);
                 if (is_wp_error($result)) {
-                    error_log('Erro ao reativar o plugin: ' . $result->get_error_message());
+                    error_log('Error reactivating the plugin: ' . $result->get_error_message());
                 }
             }
         }

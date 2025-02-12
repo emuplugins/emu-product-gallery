@@ -2,10 +2,11 @@
 
 // Retrieves the selected post types and uses them in the metabox code
 function emu_product_gallery_add_metabox() {
-    // Retrieves the selected post types from the Options Page
-    $post_types = get_option('selected_post_types', array());
+    // Retrieves the selected post types from the Options Page, ensuring it's an array
+    $post_types = (array) get_option('emu_product_gallery_posttypes', array());
 
-    if (!empty($post_types)) {
+    // Verifies if there are selected post types before adding the metabox
+    if (!empty($post_types) && is_array($post_types)) {
         add_meta_box(
             'gallery_video_metabox',            // Metabox ID
             'Image and Video Gallery',          // Title
@@ -18,30 +19,27 @@ function emu_product_gallery_add_metabox() {
 }
 add_action('add_meta_boxes', 'emu_product_gallery_add_metabox');
 
-// Exibe o conteúdo do metabox
-function exibir_metabox_galeria_video($post) {
-    // Obtém os dados salvos
-    $galeria = get_post_meta($post->ID, '_galeria', true);
+// Displays the content of the metabox
+function display_metabox_gallery_video($post) {
+    // Retrieves saved data
+    $gallery = get_post_meta($post->ID, 'emu_product_gallery_field', true);
 
-    // Garante que $galeria seja um array
-    if (!is_array($galeria)) {
-        $galeria = [];
+    // Ensures $gallery is an array
+    if (!is_array($gallery)) {
+        $gallery = [];
     }
 
-    // Campo nonce para segurança
-    wp_nonce_field('salvar_galeria_video', 'galeria_video_nonce');
+    // Nonce field for security
+    wp_nonce_field('save_gallery_video', 'gallery_video_nonce');
     
     ?>
     
-    <div id="galeria-container">
-        <!-- Botões para adicionar imagem e vídeo -->
-        <button type="button" id="add-galeria-imagem" class="button">Adicionar Imagem</button>
-        <button type="button" id="add-galeria-video" class="button">Adicionar Vídeo</button>
-
-        <!-- Lista de pré-visualização -->
-        <ul class="galeria-list">
-                <?php foreach ($galeria as $item): 
-             // Verifica se é um vídeo do YouTube
+    <div id="gallery-container">
+        
+        <!-- Preview list -->
+        <ul class="gallery-list">
+                <?php foreach ($gallery as $item): 
+             // Checks if it's a YouTube video
              $is_youtube = preg_match('/(?:youtube\.com\/(?:[^\/]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S+?[\?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $item, $matches);
              $video_id = $is_youtube ? $matches[1] : '';
              $thumbnail = $video_id ? 'https://img.youtube.com/vi/' . $video_id . '/maxresdefault.jpg' : $item;
@@ -50,44 +48,47 @@ function exibir_metabox_galeria_video($post) {
                 <img 
                     src="<?php echo esc_url($thumbnail); ?>" 
                     style="width: 100px; height: 100px; object-fit: cover;">
-                <a href="#" class="remove-item" data-url="<?php echo esc_url($item); ?>">Excluir</a>
+                <a href="#" class="remove-item" data-url="<?php echo esc_url($item); ?>">Remove</a>
                 
-                    <?php echo $video_id ? 'Vídeo' : 'Imagem'; ?>
+                    <?php echo $video_id ? 'Video' : 'Image'; ?>
                 
             </li>
         <?php endforeach; ?>
 
         </ul>
+        <!-- Buttons to add image and video -->
+                <button type="button" id="add-gallery-image" class="button">Add Image</button>
+                <button type="button" id="add-gallery-video" class="button">Add Video</button>
 
-        <!-- Campo hidden para armazenar as URLs -->
-        <input type="hidden" name="galeria" id="galeria" value="<?php echo esc_attr(json_encode($galeria)); ?>" />
+        <!-- Hidden field to store the URLs -->
+        <input type="hidden" name="gallery" id="gallery" value="<?php echo esc_attr(json_encode($gallery)); ?>" />
     </div>
     
     <style>
 
-#galeria-container{
+#gallery-container{
     display:flex;
     flex-direction:row;
     flex-wrap:wrap;
-    justify-content:space-between;
-    gap:2.5%
+    gap:0px 10px
 }
-.galeria-list {
-    display: grid;
-    grid-template-columns: repeat(3, calc(34% - 3.5%));
-    gap: 3.5%;
+.gallery-list {
+    display: flex;
+    gap: 10px;
     width:100%!important;
 }
 
-.galeria-list li {
+.gallery-list li {
     list-style: none;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap:5px
+    gap:5px;
+    width:30%;
+    max-width:100px
 }
 
-.galeria-list img {
+.gallery-list img {
     max-width: 100%!important;
     height: auto!important;
     aspect-ratio: 1;
@@ -95,7 +96,7 @@ function exibir_metabox_galeria_video($post) {
     border-radius:5px
 }
 
-.galeria-list .remove-item {
+.gallery-list .remove-item {
     color: white;
     padding:0.1em 0.7em;
     text-decoration: none;
@@ -104,30 +105,27 @@ function exibir_metabox_galeria_video($post) {
     background-color: #dc3232;
     border-radius:3px!important
 }
-#add-galeria-imagem{
+#add-gallery-image{
     background-color:#2271b1!important;
     border-radius:0.3em;
     color:white!important;
     border-color:#2271b1;
-    flex-grow:1;
 }
-#add-galeria-video{
+#add-gallery-video{
     background-color:#dc3232!important;
     border-radius:0.3em;
     color:white!important;
     border-color:#dc3232;
-    flex-grow:1
 }
 
     </style>
 
-
     <?php
 }
 
-// Salva os dados do metabox (mantido igual)
-function salvar_metabox_galeria_video($post_id) {
-    if (!isset($_POST['galeria_video_nonce']) || !wp_verify_nonce($_POST['galeria_video_nonce'], 'salvar_galeria_video')) {
+// Saves the data from the metabox (unchanged)
+function save_metabox_gallery_video($post_id) {
+    if (!isset($_POST['gallery_video_nonce']) || !wp_verify_nonce($_POST['gallery_video_nonce'], 'save_gallery_video')) {
         return $post_id;
     }
     
@@ -139,16 +137,16 @@ function salvar_metabox_galeria_video($post_id) {
         return $post_id;
     }
 
-    if (isset($_POST['galeria'])) {
-        $galeria_urls = json_decode(stripslashes($_POST['galeria']), true);
-        update_post_meta($post_id, '_galeria', $galeria_urls);
+    if (isset($_POST['gallery'])) {
+        $gallery_urls = json_decode(stripslashes($_POST['gallery']), true);
+        update_post_meta($post_id, 'emu_product_gallery_field', $gallery_urls);
     } else {
-        delete_post_meta($post_id, '_galeria');
+        delete_post_meta($post_id, 'emu_product_gallery_field');
     }
 
     return $post_id;
 }
-add_action('save_post', 'salvar_metabox_galeria_video');
+add_action('save_post', 'save_metabox_gallery_video');
 
 function emu_metabox_gallery_scripts($hook) {
     if ('post.php' != $hook && 'post-new.php' != $hook ) {

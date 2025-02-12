@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
-    let emuThumbSlider; // Slider de miniaturas
-    let emuMainSlider;  // Slider principal
-    let emuIndices = [0, 0, 0]; // Armazena os índices para navegação personalizada
+    let emuThumbSlider; // Thumbnails slider
+    let emuMainSlider;  // Main slider
+    let emuIndices = [0, 0, 0]; // Stores indices for custom navigation
 
-    // Função para inicializar o Swiper
+    // Function to initialize the Swiper
     function initSwipers() {
-        // Inicia o slider de miniaturas
+        // Initialize the thumbnails slider
         emuThumbSlider = new Swiper(".emu-thumb-slider", {
             spaceBetween: 0,
             slidesPerView: 4,
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
             freeMode: true,
         });
 
-        // Inicia o slider principal
+        // Initialize the main slider
         emuMainSlider = new Swiper(".emu-main-slider", {
             spaceBetween: 0,
             navigation: {
@@ -26,26 +26,26 @@ document.addEventListener("DOMContentLoaded", function () {
             loop: false,
         });
 
-        // Agora que o slider foi inicializado, configure os eventos do swiper
+        // Now that the slider is initialized, set up swiper events
         emuMainSlider.on('slideChange', function () {
             emuUpdateIndices();
             emuUpdateNavigationState();
         });
     }
 
-        // Garante que as setas de navegação fiquem sempre ativas
-        function emuUpdateNavigationState() {
-            // Remover a classe de desabilitado das setas
-            document.querySelector('.swiper-button-next')?.classList.remove('swiper-button-disabled');
-            document.querySelector('.swiper-button-prev')?.classList.remove('swiper-button-disabled');
-        }
+    // Ensures the navigation arrows are always active
+    function emuUpdateNavigationState() {
+        // Remove the disabled class from the arrows
+        document.querySelector('.swiper-button-next')?.classList.remove('swiper-button-disabled');
+        document.querySelector('.swiper-button-prev')?.classList.remove('swiper-button-disabled');
+    }
 
-    // Atualiza os índices dos slides
+    // Updates the slide indices
     function emuUpdateIndices() {
         emuIndices = [emuIndices[1], emuIndices[2], emuMainSlider.realIndex];
     }
 
-    // Função para pausar a mídia dos slides que não estão visíveis
+    // Function to pause media on slides that are not visible
     function emuPauseMedia() {
         document.querySelectorAll('.swiper-slide').forEach(slide => {
             slide.querySelectorAll('video').forEach(video => {
@@ -55,40 +55,40 @@ document.addEventListener("DOMContentLoaded", function () {
             let iframe = slide.querySelector('iframe');
             if (iframe) {
                 let iframeSrc = iframe.src;
-                iframe.src = ''; // Pausa o iframe
-                iframe.src = iframeSrc; // Restaura o src
+                iframe.src = ''; // Pauses the iframe
+                iframe.src = iframeSrc; // Restores the src
             }
         });
     }
 
-    // Inicializa os Swipers primeiro
+    // Initialize the Swipers first
     initSwipers();
 
-    // Agora configure os eventos de clique nas setas
+    // Now set up click events for the arrows
     document.querySelector('.swiper-button-next')?.addEventListener('click', function () {
         emuPauseMedia();
-        // Se estiver no último slide, volta para o primeiro
+        // If on the last slide, go back to the first
         if (emuMainSlider.realIndex === emuMainSlider.slides.length - 1) {
             emuMainSlider.slideTo(0);
         }
-        // Caso contrário, o próprio Swiper já avançará o slide por meio da navegação
+        // Otherwise, Swiper will handle the slide transition automatically
     });
 
     document.querySelector('.swiper-button-prev')?.addEventListener('click', function () {
         emuPauseMedia();
         emuUpdateIndices();
-        // Se estiver no primeiro slide (de acordo com seu índice personalizado), vai para o penúltimo
+        // If on the first slide (based on your custom index), go to the second-to-last slide
         if (emuIndices[0] === 0) {
             emuMainSlider.slideTo(emuMainSlider.slides.length - 2);
         }
-        // Se não, o próprio Swiper já executa a navegação padrão
+        // Otherwise, Swiper will handle the default navigation
     });
 
-    // E configure o evento de clique nas miniaturas
+    // Set up click events for the thumbnails
     document.querySelectorAll('.emu-thumb-slider .swiper-slide').forEach((thumb, index) => {
         thumb.addEventListener('click', function () {
-            emuPauseMedia(); // Pausa a mídia antes de mudar o slide
-            emuMainSlider.slideTo(index); // Muda o slide principal para o índice da miniatura clicada
+            emuPauseMedia(); // Pause media before changing the slide
+            emuMainSlider.slideTo(index); // Change the main slide to the index of the clicked thumbnail
         });
     });
 });
