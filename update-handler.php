@@ -1,7 +1,7 @@
 <?php
 
 class Emu_Product_Gallery_Updater {
-    private $api_url = 'https://seusite.com/updates/emu-product-gallery/info.json';
+    private $api_url = 'https://raw.githubusercontent.com/tonnynho2004/emu-product-gallery/refs/heads/main/info.json';
 
     public function __construct() {
         add_filter('plugins_api', [$this, 'plugin_info'], 20, 3);
@@ -69,25 +69,65 @@ class Emu_Product_Gallery_Updater {
 
 new Emu_Product_Gallery_Updater();
 
+
+
+
+
+
+
+
+
+add_action('admin_notices', function() {
+    // Exibe o diretório do arquivo do plugin
+    var_dump(basename(__DIR__)); // Verifique se o caminho completo está correto
+});
+
 add_filter('plugin_action_links_emu-product-gallery/emu-product-gallery.php', function($actions) {
-    $url = wp_nonce_url(admin_url('plugins.php?force-check-update=emu-product-gallery'), 'force_check_update');
+    error_log('plugin_action_links hook is being triggered');
+    
+    // Usa basename(__DIR__) para pegar apenas o nome da pasta
+    $slug = basename(__DIR__); // Ex: emu-product-gallery
+    
+    // Cria a URL para forçar a verificação de atualização
+    $url = wp_nonce_url(admin_url("plugins.php?force-check-update=$slug"), "force_check_update_$slug");
+    // Adiciona o link de verificação de atualização
     $actions['check_update'] = '<a href="' . esc_url($url) . '">Verificar Atualização</a>';
     return $actions;
 });
 
 add_action('admin_init', function() {
-    if (isset($_GET['force-check-update']) && $_GET['force-check-update'] === 'emu-product-gallery') {
-        check_admin_referer('force_check_update');
+    // Obtém o slug corretamente
+    $slug = basename(__DIR__);
+    if (isset($_GET['force-check-update']) && $_GET['force-check-update'] === $slug) {
+        check_admin_referer("force_check_update_$slug");
 
         // Força o WordPress a verificar atualizações
         delete_site_transient('update_plugins');
-        wp_safe_redirect(admin_url('plugins.php?checked-update=emu-product-gallery'));
+        wp_safe_redirect(admin_url("plugins.php?checked-update=$slug"));
         exit;
     }
 });
 
 add_action('admin_notices', function() {
-    if (isset($_GET['checked-update']) && $_GET['checked-update'] === 'emu-product-gallery') {
+    // Obtém o slug corretamente
+    $slug = basename(__DIR__);
+    if (isset($_GET['checked-update']) && $_GET['checked-update'] === $slug) {
         echo '<div class="updated"><p>Verificação de atualização concluída! Se houver uma nova versão, ela aparecerá em breve.</p></div>';
     }
 });
+
+add_filter('upgrader_post_install', function($response, $hook_extra, $result) {
+    global $wp_filesystem;
+
+    // Obtém o slug correto da pasta
+    $current_plugin_slug = basename(__DIR__);
+    $proper_destination = WP_PLUGIN_DIR . '/' . $current_plugin_slug;
+    $new_plugin_dir = WP_PLUGIN_DIR . '/' . basename($result['destination']);
+
+    // Se o nome da pasta estiver errado, renomeia corretamente
+    if ($new_plugin_dir !== $proper_destination) {
+        $wp_filesystem->move($new_plugin_dir, $proper_destination);
+    }
+
+    return $response;
+}, 10, 3);
