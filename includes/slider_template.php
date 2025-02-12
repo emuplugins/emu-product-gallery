@@ -1,6 +1,8 @@
 <?php 
 function emu_product_gallery_shortcode($atts) {
-    $post_id = get_the_ID();
+    // Get product_id and variation_id from attributes, if available
+    $post_id = isset($atts['product_id']) ? intval($atts['product_id']) : get_the_ID();
+    $variation_id = isset($atts['variation_id']) ? intval($atts['variation_id']) : 0;
     
     /* --- Helper Functions --- */
     if (!function_exists('getYoutubeThumbnail')) {
@@ -59,32 +61,30 @@ function emu_product_gallery_shortcode($atts) {
                             $media_list[] = $featured;
                         }
                         break;
-                        case 'woocommerce':
-                            // Get images from the product's main gallery
-                            if ($gallery = get_post_meta($post_id, '_product_image_gallery', true)) {
-                                $gallery_ids = array_filter(explode(',', $gallery), 'is_numeric');
-                                foreach ($gallery_ids as $id) {
-                                    if ($url = getImageUrlFromId($id)) {
-                                        $media_list[] = $url;
-                                    }
-                                }
+                    case 'woocommerce':
+                        // Main product gallery
+                        $gallery = get_post_meta($post_id, '_product_image_gallery', true);
+                        $gallery_ids = array_filter(explode(',', $gallery), 'is_numeric');
+                        foreach ($gallery_ids as $id) {
+                            if ($url = getImageUrlFromId($id)) {
+                                $media_list[] = $url;
                             }
+                        }
                         
-                            // If it's a product variation, get images only for the variation
-                            if (isset($atts['variation_id']) && $variation_id = $atts['variation_id']) {
-                                $variation_gallery = get_post_meta($variation_id, '_product_image_gallery', true);
-                                if ($variation_gallery) {
-                                    $gallery_ids = array_filter(explode(',', $variation_gallery), 'is_numeric');
-                                    // Add only the variation image as the first image in the gallery
-                                    if ($gallery_ids) {
-                                        $first_variation_image = getImageUrlFromId($gallery_ids[0]); // First image of the variation
-                                        if ($first_variation_image) {
-                                            array_unshift($media_list, $first_variation_image); // Place it at the beginning of the gallery
-                                        }
+                        // If it's a variation, add its image first
+                        if ($variation_id) {
+                            $variation_gallery = get_post_meta($variation_id, '_product_image_gallery', true);
+                            if ($variation_gallery) {
+                                $variation_ids = array_filter(explode(',', $variation_gallery), 'is_numeric');
+                                if (!empty($variation_ids)) {
+                                    $first_variation_image = getImageUrlFromId($variation_ids[0]);
+                                    if ($first_variation_image) {
+                                        array_unshift($media_list, $first_variation_image);
                                     }
                                 }
                             }
-                            break;
+                        }
+                        break;
                 }
                 break;
             case 'field':
@@ -156,7 +156,7 @@ function emu_product_gallery_shortcode($atts) {
                 <div style="overflow:hidden; position:relative; width:100px; flex-grow:1">
                     <div class="swiper-container emu-main-slider" style="position:relative">
                         <div class="swiper-wrapper">'.$slides_html.'                    
-                        <div class="swiper-slide gambiarra"></div>
+                        
                         </div>
                         <div class="swiper-button-next"></div>
                         <div class="swiper-button-prev"></div>
@@ -166,111 +166,7 @@ function emu_product_gallery_shortcode($atts) {
                         <div class="swiper-wrapper">'.$thumbs_html.'</div>
                     </div>
                 </div>
-            </div>'
-            ;
+            </div>';
 }
 
 add_shortcode('emu_product_gallery', 'emu_product_gallery_shortcode');
-
-
-
-
-
-
-
-
-// WooCommerce hook to capture the selected variation
-function capture_variation_id_for_gallery() {
-    ?>
-    <script type="text/javascript">
-        jQuery(function($){
-            $('form.cart').on('found_variation', function(event, variation) {
-                // Sends the selected variation to the backend
-                var variation_id = variation.variation_id;
-                var product_id = $('input[name="product_id"]').val();
-                
-                // Updates the shortcode with the correct variation
-                if (variation_id && product_id) {
-                    $.ajax({
-                        url: '<?php echo admin_url("admin-ajax.php"); ?>',
-                        method: 'POST',
-                        data: {
-                            action: 'update_gallery_with_variation',
-                            variation_id: variation_id,
-                            product_id: product_id
-                        },
-                        success: function(response) {
-                            $('.product-gallery-container').html(response);
-                        }
-                    });
-                }
-            });
-        });
-    </script>
-    <?php
-}
-add_action('wp_footer', 'capture_variation_id_for_gallery');
-
-// Function to process the AJAX response and update the gallery
-function update_gallery_with_variation() {
-    $variation_id = isset($_POST['variation_id']) ? (int) $_POST['variation_id'] : 0;
-    $product_id = isset($_POST['product_id']) ? (int) $_POST['product_id'] : 0;
-    
-    if (!$variation_id || !$product_id) {
-        wp_send_json_error('Invalid variation or product ID.');
-    }
-
-    // Captures the images of the selected variation
-    $media_list = array();
-
-    // Get the variation gallery
-    $variation_gallery = get_post_meta($variation_id, '_product_image_gallery', true);
-    if ($variation_gallery) {
-        $gallery_ids = array_filter(explode(',', $variation_gallery), 'is_numeric');
-        foreach ($gallery_ids as $id) {
-            if ($url = getImageUrlFromId($id)) {
-                $media_list[] = $url;
-            }
-        }
-    }
-
-    // If no variation, get the main product images
-    if (empty($media_list)) {
-        $gallery = get_post_meta($product_id, '_product_image_gallery', true);
-        $gallery_ids = array_filter(explode(',', $gallery), 'is_numeric');
-        foreach ($gallery_ids as $id) {
-            if ($url = getImageUrlFromId($id)) {
-                $media_list[] = $url;
-            }
-        }
-    }
-
-    // Renders the gallery images
-    if (!empty($media_list)) {
-        $slides_html = '';
-        $thumbs_html = '';
-
-        foreach ($media_list as $index => $item) {
-            $item = trim($item);
-            $thumb_url = is_numeric($item) ? getImageUrlFromId($item) : $item;
-
-            $slides_html .= sprintf(
-                '<div class="swiper-slide"><img src="%s" alt="Slide %d"></div>',
-                esc_url($item),
-                $index + 1
-            );
-
-            $thumbs_html .= sprintf(
-                '<div class="swiper-slide"><img src="%s" alt="Thumb %d"></div>',
-                esc_url($thumb_url),
-                $index + 1
-            );
-        }
-
-        wp_send_json_success('<div class="swiper-container emu-main-slider"><div class="swiper-wrapper">'.$slides_html.'</div></div><div class="swiper-container emu-thumb-slider"><div class="swiper-wrapper">'.$thumbs_html.'</div></div>');
-    } else {
-        wp_send_json_error('No images found for the selected variation.');
-    }
-}
-add_action('wp_ajax_update_gallery_with_variation', 'update_gallery_with_variation');
-add_action('wp_ajax_nopriv_update_gallery_with_variation', 'update_gallery_with_variation');
