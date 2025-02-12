@@ -152,19 +152,22 @@ function emu_product_gallery_shortcode($atts) {
         );
     }
 
-    return '<div style="overflow:hidden; position:relative">
-                <div class="swiper-container emu-main-slider" style="position:relative">
-                    <div class="swiper-wrapper">'.$slides_html.'                    
-                    <div class="swiper-slide gambiarra"></div>
+    return '<div class="emu-product-gallery-wrapper" style="display:flex; flex-direction:row;">
+                <div style="overflow:hidden; position:relative; width:100px; flex-grow:1">
+                    <div class="swiper-container emu-main-slider" style="position:relative">
+                        <div class="swiper-wrapper">'.$slides_html.'                    
+                        <div class="swiper-slide gambiarra"></div>
+                        </div>
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-pagination"></div>
                     </div>
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
-                    <div class="swiper-pagination"></div>
+                    <div class="swiper-container emu-thumb-slider">
+                        <div class="swiper-wrapper">'.$thumbs_html.'</div>
+                    </div>
                 </div>
-                <div class="swiper-container emu-thumb-slider">
-                    <div class="swiper-wrapper">'.$thumbs_html.'</div>
-                </div>
-            </div>';
+            </div>'
+            ;
 }
 
 add_shortcode('emu_product_gallery', 'emu_product_gallery_shortcode');
