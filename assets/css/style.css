@@ -5,7 +5,16 @@
     aspect-ratio: 1;
     margin: 0 auto;
 }
-.emu-product-gallery-wrapper .swiper-wrapper {
+
+.emu-main-slider video, .emu-main-slider img, .emu-main-slider iframe {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0px;
+    aspect-ratio: 1 !important;
+}
+
+.emu-product-gallery-wrapper .emu-main-slider .swiper-wrapper {
     box-sizing: content-box;
     display: grid;
     grid-auto-flow: column;
@@ -16,17 +25,9 @@
     transition-property: transform;
     width: 100%;
     z-index: 1;
-    grid-template-columns: repeat(40, 1fr);
-    width: 1010%;
+    grid-template-columns: repeat(40, 1fr)!important;
+    width: 1010%!important;
 }
-.emu-main-slider video, .emu-main-slider img, .emu-main-slider iframe {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 0px;
-    aspect-ratio: 1 !important;
-}
-
 /* Thumbnail Slider */
 .emu-thumb-slider {
     margin-top: 15px;
