@@ -72,22 +72,3 @@ function emu_product_gallery_checkbox() {
         <?php
     }
 }
-
-// Retrieves the selected post types and uses them in the metabox code
-function emu_product_gallery_add_metabox() {
-    // Retrieves the selected post types from the Options Page
-    $post_types = get_option('post_types_selected', array());
-
-    if (!empty($post_types)) {
-        add_meta_box(
-            'gallery_video_metabox',            // Metabox ID
-            'Image and Video Gallery',          // Title
-            'display_metabox_gallery_video',    // Function to display the content
-            $post_types,                        // Selected post types
-            'normal',                           // Context
-            'high'                              // Priority
-        );
-    }
-}
-add_action('add_meta_boxes', 'emu_product_gallery_add_metabox');
-?>
