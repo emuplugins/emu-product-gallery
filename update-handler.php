@@ -68,3 +68,9 @@ class Emu_Product_Gallery_Updater {
 }
 
 new Emu_Product_Gallery_Updater();
+
+add_filter('plugin_action_links_emu-product-gallery/emu-product-gallery.php', function($actions) {
+    $url = wp_nonce_url(admin_url('plugins.php?force-check-update=emu-product-gallery'), 'force_check_update');
+    $actions['check_update'] = '<a href="' . esc_url($url) . '">Verificar Atualização</a>';
+    return $actions;
+});
