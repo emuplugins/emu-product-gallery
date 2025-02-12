@@ -5,7 +5,20 @@
     aspect-ratio: 1;
     margin: 0 auto;
 }
-
+.emu-product-gallery-wrapper .swiper-wrapper {
+    box-sizing: content-box;
+    display: grid;
+    grid-auto-flow: column;
+    height: 100%;
+    max-height: inherit;
+    min-height: inherit;
+    position: relative;
+    transition-property: transform;
+    width: 100%;
+    z-index: 1;
+    grid-template-columns: repeat(40, 1fr);
+    width: 1010%;
+}
 .emu-main-slider video, .emu-main-slider img, .emu-main-slider iframe {
     width: 100%;
     height: 100%;
