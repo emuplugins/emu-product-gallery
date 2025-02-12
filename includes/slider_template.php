@@ -2,7 +2,7 @@
 function emu_product_gallery_shortcode($atts) {
     $post_id = get_the_ID();
     
-    /* --- Funções Auxiliares --- */
+    /* --- Helper Functions --- */
     if (!function_exists('getYoutubeThumbnail')) {
         function getYoutubeThumbnail($url) {
             preg_match('/(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S+?[\?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $matches);
@@ -24,7 +24,7 @@ function emu_product_gallery_shortcode($atts) {
         }
     }
 
-    /* --- Processamento dos Atributos --- */
+    /* --- Attribute Processing --- */
     $processing_order = array();
     foreach ($atts as $key => $value) {
         if (is_numeric($key)) {
@@ -47,7 +47,7 @@ function emu_product_gallery_shortcode($atts) {
         );
     }
 
-    /* --- Construção da Lista de Mídias --- */
+    /* --- Media List Construction --- */
     $media_list = array();
     
     foreach ($processing_order as $item) {
@@ -60,7 +60,7 @@ function emu_product_gallery_shortcode($atts) {
                         }
                         break;
                         case 'woocommerce':
-                            // Buscar imagens da galeria principal do produto
+                            // Get images from the product's main gallery
                             if ($gallery = get_post_meta($post_id, '_product_image_gallery', true)) {
                                 $gallery_ids = array_filter(explode(',', $gallery), 'is_numeric');
                                 foreach ($gallery_ids as $id) {
@@ -70,16 +70,16 @@ function emu_product_gallery_shortcode($atts) {
                                 }
                             }
                         
-                            // Se for uma variação do produto, buscar apenas as imagens associadas à variação
+                            // If it's a product variation, get images only for the variation
                             if (isset($atts['variation_id']) && $variation_id = $atts['variation_id']) {
                                 $variation_gallery = get_post_meta($variation_id, '_product_image_gallery', true);
                                 if ($variation_gallery) {
                                     $gallery_ids = array_filter(explode(',', $variation_gallery), 'is_numeric');
-                                    // Adiciona apenas a imagem da variação como primeira imagem da galeria
+                                    // Add only the variation image as the first image in the gallery
                                     if ($gallery_ids) {
-                                        $first_variation_image = getImageUrlFromId($gallery_ids[0]); // Primeira imagem da variação
+                                        $first_variation_image = getImageUrlFromId($gallery_ids[0]); // First image of the variation
                                         if ($first_variation_image) {
-                                            array_unshift($media_list, $first_variation_image); // Coloca no começo da galeria
+                                            array_unshift($media_list, $first_variation_image); // Place it at the beginning of the gallery
                                         }
                                     }
                                 }
@@ -107,10 +107,10 @@ function emu_product_gallery_shortcode($atts) {
     }
 
     if (empty($media_list)) {
-        return '<strong>OPS!</strong> Nenhum valor foi fornecido para a galeria.';
+        return '<strong>OPS!</strong> No values were provided for the gallery.';
     }
 
-    /* --- Renderização da Galeria --- */
+    /* --- Gallery Rendering --- */
     $slides_html = '';
     $thumbs_html = '';
     
@@ -141,7 +141,7 @@ function emu_product_gallery_shortcode($atts) {
                 $index+1
             );
         } else {
-            $slides_html .= '<div class="swiper-slide">Erro ao carregar imagem</div>';
+            $slides_html .= '<div class="swiper-slide">Error loading image</div>';
         }
         $slides_html .= '</div>';
 
@@ -176,30 +176,17 @@ add_shortcode('emu_product_gallery', 'emu_product_gallery_shortcode');
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Hook do WooCommerce para capturar a variação selecionada
+// WooCommerce hook to capture the selected variation
 function capture_variation_id_for_gallery() {
     ?>
     <script type="text/javascript">
         jQuery(function($){
             $('form.cart').on('found_variation', function(event, variation) {
-                // Envia a variação selecionada para o backend
+                // Sends the selected variation to the backend
                 var variation_id = variation.variation_id;
                 var product_id = $('input[name="product_id"]').val();
                 
-                // Atualiza o shortcode com a variação correta
+                // Updates the shortcode with the correct variation
                 if (variation_id && product_id) {
                     $.ajax({
                         url: '<?php echo admin_url("admin-ajax.php"); ?>',
@@ -221,7 +208,7 @@ function capture_variation_id_for_gallery() {
 }
 add_action('wp_footer', 'capture_variation_id_for_gallery');
 
-// Função para processar a resposta do AJAX e atualizar a galeria
+// Function to process the AJAX response and update the gallery
 function update_gallery_with_variation() {
     $variation_id = isset($_POST['variation_id']) ? (int) $_POST['variation_id'] : 0;
     $product_id = isset($_POST['product_id']) ? (int) $_POST['product_id'] : 0;
@@ -230,10 +217,10 @@ function update_gallery_with_variation() {
         wp_send_json_error('Invalid variation or product ID.');
     }
 
-    // Captura as imagens da variação selecionada
+    // Captures the images of the selected variation
     $media_list = array();
 
-    // Buscar a galeria da variação
+    // Get the variation gallery
     $variation_gallery = get_post_meta($variation_id, '_product_image_gallery', true);
     if ($variation_gallery) {
         $gallery_ids = array_filter(explode(',', $variation_gallery), 'is_numeric');
@@ -244,7 +231,7 @@ function update_gallery_with_variation() {
         }
     }
 
-    // Caso não tenha variação, buscar as imagens do produto principal
+    // If no variation, get the main product images
     if (empty($media_list)) {
         $gallery = get_post_meta($product_id, '_product_image_gallery', true);
         $gallery_ids = array_filter(explode(',', $gallery), 'is_numeric');
@@ -255,7 +242,7 @@ function update_gallery_with_variation() {
         }
     }
 
-    // Renderiza as imagens da galeria
+    // Renders the gallery images
     if (!empty($media_list)) {
         $slides_html = '';
         $thumbs_html = '';
