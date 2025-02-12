@@ -119,15 +119,24 @@ add_action('admin_notices', function() {
 add_filter('upgrader_post_install', function($response, $hook_extra, $result) {
     global $wp_filesystem;
 
-    // Obtém o slug correto da pasta
+    // Obtém o slug correto da pasta (por exemplo, "emu-product-gallery")
     $current_plugin_slug = basename(__DIR__);
     $proper_destination = WP_PLUGIN_DIR . '/' . $current_plugin_slug;
     $new_plugin_dir = WP_PLUGIN_DIR . '/' . basename($result['destination']);
 
-    // Se o nome da pasta estiver errado, renomeia corretamente
+    // Se o nome da pasta estiver errado, renomeia para o destino correto
     if ($new_plugin_dir !== $proper_destination) {
         $wp_filesystem->move($new_plugin_dir, $proper_destination);
     }
+
+    // Limpa o cache de status dos arquivos para garantir que as mudanças sejam lidas
+    clearstatcache(true, $proper_destination);
+
+    // Atualiza o destino na resposta para o caminho correto
+    $response['destination'] = $proper_destination;
+
+    // Força a limpeza dos transientes de atualização para que o WP recarregue os dados atualizados
+    delete_site_transient('update_plugins');
 
     return $response;
 }, 10, 3);
