@@ -74,3 +74,20 @@ add_filter('plugin_action_links_emu-product-gallery/emu-product-gallery.php', fu
     $actions['check_update'] = '<a href="' . esc_url($url) . '">Verificar Atualização</a>';
     return $actions;
 });
+
+add_action('admin_init', function() {
+    if (isset($_GET['force-check-update']) && $_GET['force-check-update'] === 'emu-product-gallery') {
+        check_admin_referer('force_check_update');
+
+        // Força o WordPress a verificar atualizações
+        delete_site_transient('update_plugins');
+        wp_safe_redirect(admin_url('plugins.php?checked-update=emu-product-gallery'));
+        exit;
+    }
+});
+
+add_action('admin_notices', function() {
+    if (isset($_GET['checked-update']) && $_GET['checked-update'] === 'emu-product-gallery') {
+        echo '<div class="updated"><p>Verificação de atualização concluída! Se houver uma nova versão, ela aparecerá em breve.</p></div>';
+    }
+});
