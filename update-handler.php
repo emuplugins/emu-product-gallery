@@ -79,7 +79,14 @@ new Emu_Product_Gallery_Updater();
 
 
 
+add_action('admin_notices', function() {
+    // Exibe o diretório do arquivo do plugin
+    var_dump(basename(__DIR__)); // Verifique se o caminho completo está correto
+});
+
 add_filter('plugin_action_links_emu-product-gallery/emu-product-gallery.php', function($actions) {
+    error_log('plugin_action_links hook is being triggered');
+    
     // Usa basename(__DIR__) para pegar apenas o nome da pasta
     $slug = basename(__DIR__); // Ex: emu-product-gallery
     
@@ -126,3 +133,30 @@ add_filter('upgrader_post_install', function($response, $hook_extra, $result) {
 
     return $response;
 }, 10, 3);
+
+/**
+ * Tenta reativar automaticamente o plugin após a atualização.
+ *
+ * Se o plugin foi atualizado e estava ativo antes, essa função o reativa.
+ */
+function auto_reactivate_plugin_after_update($upgrader_object, $options) {
+    if (isset($options['action'], $options['type']) && 
+        $options['action'] === 'update' && 
+        $options['type'] === 'plugin') {
+
+        // Especifique o caminho relativo do arquivo principal do plugin
+        $plugin_file = 'emu-product-gallery/emu-product-gallery.php';
+
+        // Verifica se o nosso plugin está na lista de plugins atualizados
+        if (in_array($plugin_file, $options['plugins'])) {
+            // Se o plugin não estiver ativo, tenta reativá-lo
+            if (!is_plugin_active($plugin_file)) {
+                $result = activate_plugin($plugin_file);
+                if (is_wp_error($result)) {
+                    error_log('Erro ao reativar o plugin: ' . $result->get_error_message());
+                }
+            }
+        }
+    }
+}
+add_action('upgrader_process_complete', 'auto_reactivate_plugin_after_update', 10, 2);
