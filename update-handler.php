@@ -68,24 +68,7 @@ class Emu_Product_Gallery_Updater {
 
 new Emu_Product_Gallery_Updater();
 
-
-
-
-
-
-
-
-
-
-
-add_action('admin_notices', function() {
-    // Exibe o diretório do arquivo do plugin
-    var_dump("oiiiiii"); // Verifique se o caminho completo está correto
-});
-
 add_filter('plugin_action_links_emu-product-gallery/emu-product-gallery.php', function($actions) {
-    error_log('plugin_action_links hook is being triggered');
-    
     // Usa basename(__DIR__) para pegar apenas o nome da pasta
     $slug = basename(__DIR__); // Ex: emu-product-gallery
     
