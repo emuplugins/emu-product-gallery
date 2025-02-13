@@ -7,6 +7,10 @@ Version: 1.1.0
 Author: Angard Agency
 Author URI: https://aganrdagency.com
 */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 require_once plugin_dir_path(__FILE__) . 'update-handler.php';
 require_once plugin_dir_path(__FILE__) . 'includes/metaboxes.php';
 require_once plugin_dir_path(__FILE__) . 'includes/option_page.php';
