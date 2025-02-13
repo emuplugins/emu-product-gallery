@@ -1,4 +1,9 @@
 <?php 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 function emu_product_gallery_shortcode($atts) {
     // Get product_id and variation_id from attributes, if available
     $post_id = isset($atts['product_id']) ? intval($atts['product_id']) : get_the_ID();
