@@ -1,7 +1,7 @@
 
 <?php
 class Emu_Product_Gallery_Updater {
-    private $api_url = 'https://raw.githubusercontent.com/tonnynho2004/emu-product-gallery/refs/heads/main/info.json';
+    private $api_url = 'https://raw.githubusercontent.com/emuplugins/emu-product-gallery/refs/heads/main/info.json';
 
     public function __construct() {
         add_filter('plugins_api', [$this, 'plugin_info'], 20, 3);
