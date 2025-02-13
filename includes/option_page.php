@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 // Creates the Options Page for the Emu Product Gallery plugin
 function emu_product_gallery_options() {
     // Adds the options page to the menu
