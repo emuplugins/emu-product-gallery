@@ -1,3 +1,4 @@
+
 <?php
 class Emu_Product_Gallery_Updater {
     private $api_url = 'https://raw.githubusercontent.com/tonnynho2004/emu-product-gallery/refs/heads/main/info.json';
@@ -68,23 +69,16 @@ class Emu_Product_Gallery_Updater {
 new Emu_Product_Gallery_Updater();
 
 add_filter('plugin_action_links_emu-product-gallery/emu-product-gallery.php', function($actions) {
-    // Use basename(__DIR__) to get only the folder name
-    $slug = basename(__DIR__); // Ex: emu-product-gallery
-    
-    // Create the URL to force the update check
+    $slug = basename(__DIR__);
     $url = wp_nonce_url(admin_url("plugins.php?force-check-update=$slug"), "force_check_update_$slug");
-    // Add the update check link
     $actions['check_update'] = '<a href="' . esc_url($url) . '">Check for Update</a>';
     return $actions;
 });
 
 add_action('admin_init', function() {
-    // Get the correct slug
     $slug = basename(__DIR__);
     if (isset($_GET['force-check-update']) && $_GET['force-check-update'] === $slug) {
         check_admin_referer("force_check_update_$slug");
-
-        // Force WordPress to check for updates
         delete_site_transient('update_plugins');
         wp_safe_redirect(admin_url("plugins.php?checked-update=$slug"));
         exit;
@@ -92,7 +86,6 @@ add_action('admin_init', function() {
 });
 
 add_action('admin_notices', function() {
-    // Get the correct slug
     $slug = basename(__DIR__);
     if (isset($_GET['checked-update']) && $_GET['checked-update'] === $slug) {
         echo '<div class="updated"><p>Update check completed! If there is a new version, it will appear soon.</p></div>';
@@ -102,12 +95,10 @@ add_action('admin_notices', function() {
 add_filter('upgrader_post_install', function($response, $hook_extra, $result) {
     global $wp_filesystem;
 
-    // Get the correct plugin folder slug
     $current_plugin_slug = basename(__DIR__);
     $proper_destination = WP_PLUGIN_DIR . '/' . $current_plugin_slug;
     $new_plugin_dir = WP_PLUGIN_DIR . '/' . basename($result['destination']);
 
-    // If the folder name is wrong, rename it correctly
     if ($new_plugin_dir !== $proper_destination) {
         $wp_filesystem->move($new_plugin_dir, $proper_destination);
     }
@@ -115,11 +106,6 @@ add_filter('upgrader_post_install', function($response, $hook_extra, $result) {
     return $response;
 }, 10, 3);
 
-/**
- * Attempts to automatically reactivate the plugin after an update.
- *
- * If the plugin was updated and was active before, this function reactivates it.
- */
 if (!function_exists('auto_reactivate_plugin_after_update')) {
     function auto_reactivate_plugin_after_update($upgrader_object, $options) {
         if (isset($options['action'], $options['type']) && 
