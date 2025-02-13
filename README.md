@@ -2,6 +2,16 @@
 
 <p>Este plugin permite adicionar uma galeria de imagens para produtos em seu site WordPress utilizando o shortcode <code>[emu_product_gallery]</code>. A galeria pode ser personalizada através de diferentes atributos. Abaixo, explicamos o funcionamento de cada um desses atributos.</p>
 
+
+
+
+<h2>Como usar:</h2>
+<p><strong>Descrição:</strong> Quando o shortcode é usado sem atributos, ele exibe a galeria associada ao campo <code>emu_product_gallery_field</code> (campo padrão).</p>
+<p><strong>Como usar:</strong> Se o shortcode for utilizado sem qualquer atributo, ele buscará o campo <code>emu_product_gallery_field</code> para gerar a galeria.</p>
+<p><strong>Exemplo:</strong></p>
+<pre><code>[emu_product_gallery]</code></pre>
+<p><strong>Comportamento:</strong> Este é o comportamento padrão e exibe a galeria associada ao campo personalizado <code>emu_product_gallery_field</code>.</p>
+
 <h2>Atributos do Shortcode</h2>
 
 <h3>1. <code>thumbnail</code></h3>
@@ -24,12 +34,5 @@
 <p><strong>Exemplo:</strong></p>
 <pre><code>[emu_product_gallery field="campo_personalizado"]</code></pre>
 <p><strong>Comportamento:</strong> Ao passar o nome de um campo personalizado como valor para o atributo <code>field</code>, o shortcode buscará as informações desse campo e as exibirá na galeria. O campo pode ser um campo de imagem ou qualquer outro tipo de mídia.</p>
-
-<h3>4. Sem Atributos</h3>
-<p><strong>Descrição:</strong> Quando o shortcode é usado sem atributos, ele exibe a galeria associada ao campo <code>emu_product_gallery_field</code> (campo padrão).</p>
-<p><strong>Como usar:</strong> Se o shortcode for utilizado sem qualquer atributo, ele buscará o campo <code>emu_product_gallery_field</code> para gerar a galeria.</p>
-<p><strong>Exemplo:</strong></p>
-<pre><code>[emu_product_gallery]</code></pre>
-<p><strong>Comportamento:</strong> Este é o comportamento padrão e exibe a galeria associada ao campo personalizado <code>emu_product_gallery_field</code>.</p>
 
 <p>Com esses atributos, você pode personalizar a galeria de imagens de acordo com suas necessidades, seja exibindo a imagem destacada, as imagens da galeria do WooCommerce ou as imagens associadas a campos personalizados.</p>
