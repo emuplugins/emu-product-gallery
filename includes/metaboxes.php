@@ -1,5 +1,8 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit;
+}
 // Retrieves the selected post types and uses them in the metabox code
 function emu_product_gallery_add_metabox() {
     // Retrieves the selected post types from the Options Page, ensuring it's an array
