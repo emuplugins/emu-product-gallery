@@ -1,9 +1,4 @@
 <?php
-
-if (!defined('ABSPATH')) {
-    exit;
-}
-
 class Emu_Product_Gallery_Updater {
     private $api_url = 'https://raw.githubusercontent.com/tonnynho2004/emu-product-gallery/refs/heads/main/info.json';
 
@@ -125,24 +120,21 @@ add_filter('upgrader_post_install', function($response, $hook_extra, $result) {
  *
  * If the plugin was updated and was active before, this function reactivates it.
  */
-function auto_reactivate_plugin_after_update($upgrader_object, $options) {
-    if (isset($options['action'], $options['type']) && 
-        $options['action'] === 'update' && 
-        $options['type'] === 'plugin') {
+if (!function_exists('auto_reactivate_plugin_after_update')) {
+    function auto_reactivate_plugin_after_update($upgrader_object, $options) {
+        if (isset($options['action'], $options['type']) && 
+            $options['action'] === 'update' && 
+            $options['type'] === 'plugin') {
 
-        // Specify the relative path of the main plugin file
-        $plugin_file = 'emu-product-gallery/emu-product-gallery.php';
-
-        // Check if our plugin is in the list of updated plugins
-        if (in_array($plugin_file, $options['plugins'])) {
-            // If the plugin is not active, try to reactivate it
-            if (!is_plugin_active($plugin_file)) {
-                $result = activate_plugin($plugin_file);
-                if (is_wp_error($result)) {
-                    error_log('Error reactivating the plugin: ' . $result->get_error_message());
+            foreach ($options['plugins'] as $plugin) {
+                if (!is_plugin_active($plugin)) {
+                    $result = activate_plugin($plugin);
+                    if (is_wp_error($result)) {
+                        error_log('Erro ao reativar o plugin: ' . $result->get_error_message());
+                    }
                 }
             }
         }
     }
+    add_action('upgrader_process_complete', 'auto_reactivate_plugin_after_update', 10, 2);
 }
-add_action('upgrader_process_complete', 'auto_reactivate_plugin_after_update', 10, 2);
