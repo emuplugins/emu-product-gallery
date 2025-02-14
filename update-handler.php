@@ -1,8 +1,5 @@
 <?php
 
-$plugin_slug = basename(__DIR__);
-$plugin_dir = basename(__DIR__); // Mantemos o diretório original para referência
-
 // Remove sufixo '-main' se presente
 if (substr($plugin_slug, -5) === '-main') {
     $plugin_slug = substr($plugin_slug, 0, -5);
