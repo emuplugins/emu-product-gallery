@@ -17,6 +17,7 @@
 
 .emu-product-gallery-wrapper .swiper-slide {
   aspect-ratio:1!important;
+	transition:transform 0.5s!important
 }
 .emu-product-gallery-wrapper .emu-main-slider .swiper-wrapper {
     box-sizing: content-box;
@@ -86,3 +87,27 @@
 .emu-swiper-button-next:hover, .emu-swiper-button-prev:hover {
     background: rgba(0, 0, 0, 0.8);
 }
+
+.emu-product-gallery-wrapper.loading {
+opacity:0
+}
+
+.emu-product-gallery-wrapper {
+transition:opacity 0.2s
+}
+
+.elementor-editor-active .emu-product-gallery-wrapper .swiper-wrapper {
+    display: none!important
+}
+.elementor-editor-active .emu-main-slider:AFTER{
+    content: 'Devido a incompatibilidades com o editor, esse slide não funciona por aqui! Abra a página no site ao vivo, fora do elementor.';
+    font-family: Sans-Serif;
+    font-weight: 400;
+    color:black;
+    padding:15px;
+    text-align: center;
+    display: flex;
+    width:70%;
+    margin:auto;
+}
+
