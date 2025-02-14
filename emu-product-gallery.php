@@ -12,11 +12,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+
+
 $plugin_slug = basename(__DIR__);  // Diretório do plugin
 if (substr($plugin_slug, -5) === '-main') {
     $plugin_slug = substr($plugin_slug, 0, -5); // Remove o sufixo '-main'
 }
-
+$plugin_dir = basename(__DIR__); // Mantemos o diretório original para referência
 
 require_once plugin_dir_path(__FILE__) . 'update-handler.php';
 require_once plugin_dir_path(__FILE__) . 'includes/metaboxes.php';
