@@ -73,7 +73,7 @@ if (!class_exists('Emu_Updater')) {
 $plugin_slug = basename(__DIR__);
 new Emu_Updater($plugin_slug);
 
-add_filter('plugin_action_links_' . $plugin_slug . '/' . $plugin_slug . '.php', function($actions) use ($plugin_slug) {
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), function($actions) use ($plugin_slug) {
     $url = wp_nonce_url(admin_url("plugins.php?force-check-update=$plugin_slug"), "force_check_update_$plugin_slug");
     $actions['check_update'] = '<a href="' . esc_url($url) . '">Check for Update</a>';
     return $actions;
@@ -107,21 +107,41 @@ add_filter('upgrader_post_install', function($response, $hook_extra, $result) us
     return $response;
 }, 10, 3);
 
-function auto_reactivate_plugin_after_update($upgrader_object, $options) {
-    $plugin_slug = basename(__DIR__);
-    $plugin_file = $plugin_slug . '/' . $plugin_slug . '.php';
 
+if (!function_exists('auto_reactivate_plugin_after_update')) {
+
+function auto_reactivate_plugin_after_update($upgrader_object, $options) {
+    $plugin_basedir = basename(dirname(__FILE__)); // Diretório real do plugin instalado
+    $plugin_slug = basename(__DIR__); // Nome esperado do diretório do plugin
+    $plugin_file = $plugin_basedir . '/' . $plugin_slug . '.php'; // Caminho do arquivo do plugin
+
+    // Verifica se foi uma atualização de plugin
     if (isset($options['action'], $options['type']) && 
         $options['action'] === 'update' && 
         $options['type'] === 'plugin' && 
         in_array($plugin_file, $options['plugins'])) {
         
+        // Se o diretório do plugin for diferente do esperado, renomeia a pasta
+        if ($plugin_basedir !== $plugin_slug) {
+            $old_path = WP_PLUGIN_DIR . '/' . $plugin_basedir;
+            $new_path = WP_PLUGIN_DIR . '/' . $plugin_slug;
+
+            if (rename($old_path, $new_path)) {
+                $plugin_file = $plugin_slug . '/' . $plugin_slug . '.php'; // Atualiza o caminho do arquivo
+            } else {
+                error_log('Erro ao renomear a pasta do plugin.');
+            }
+        }
+
+        // Reativa o plugin se não estiver ativo
         if (!is_plugin_active($plugin_file)) {
             $result = activate_plugin($plugin_file);
             if (is_wp_error($result)) {
-                error_log('Error reactivating the plugin: ' . $result->get_error_message());
+                error_log('Erro ao reativar o plugin: ' . $result->get_error_message());
             }
         }
     }
 }
+}
+
 add_action('upgrader_process_complete', 'auto_reactivate_plugin_after_update', 10, 2);
