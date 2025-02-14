@@ -11,6 +11,7 @@ Author URI: https://aganrdagency.com
 if (!defined('ABSPATH')) {
     exit;
 }
+$plugin_slug = 'emu-product-gallery'; // for the update_handler.php
 require_once plugin_dir_path(__FILE__) . 'update-handler.php';
 require_once plugin_dir_path(__FILE__) . 'includes/metaboxes.php';
 require_once plugin_dir_path(__FILE__) . 'includes/option_page.php';
