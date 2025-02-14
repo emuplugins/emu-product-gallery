@@ -157,8 +157,9 @@ function emu_product_gallery_shortcode($atts) {
         );
     }
 
-    return '<div class="emu-product-gallery-wrapper" style="display:flex; flex-direction:row;">
-                <div style="overflow:hidden; position:relative; width:100px; flex-grow:1">
+    return '<div class="emu-product-gallery-wrapper loading" style="display:flex; flex-direction:row;">
+
+ <div style="overflow:hidden; position:relative; width:100px; flex-grow:1">
                     <div class="swiper-container emu-main-slider" style="position:relative">
                         <div class="swiper-wrapper">'.$slides_html.'                    
                         
