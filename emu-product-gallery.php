@@ -3,7 +3,7 @@
 Plugin Name: Emu Product Gallery
 Plugin URI: https://example.com/emu-product-gallery
 Description: A plugin to display image and YouTube video gallery sliders.
-Version: 1.1.5
+Version: 1.1.2
 Author: Emu Plugins
 Author URI: https://aganrdagency.com
 */
@@ -12,9 +12,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Obtendo o nome do plugin e removendo o sufixo '-main'
-$plugin_slug = rtrim(plugin_dir_path(__FILE__), '/') ;
-$plugin_slug = basename($plugin_slug);
+$plugin_slug = basename(__DIR__);  // Diretório do plugin
 if (substr($plugin_slug, -5) === '-main') {
     $plugin_slug = substr($plugin_slug, 0, -5); // Remove o sufixo '-main'
 }
