@@ -1,7 +1,7 @@
 {
   "name": "Emu Product Gallery",
   "slug": "emu-product-gallery",
-  "version": "1.1.21",
+  "version": "1.1.22",
   "download_url": "https://github.com/emuplugins/emu-product-gallery/archive/refs/heads/main.zip",
   "tested": "6.4",
   "requires": "5.8",
