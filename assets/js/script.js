@@ -6,6 +6,16 @@ jQuery(function($) {
       originalMainGallery  = $('.emu-main-slider .swiper-wrapper').html(),
       originalThumbGallery = $('.emu-thumb-slider .swiper-wrapper').html();
 
+  // Show the preloader and hide the swiper-wrapper
+  function showPreloader() {
+   // nothing to-do...
+  }
+
+  // Hide the preloader and make swiper-wrapper visible
+  function hidePreloader() {
+    $('.emu-product-gallery-wrapper').removeClass('loading');  // Remove loading class to hide preloader
+  }
+
   // Function to pause media (videos/iframes) on non-visible slides
   function pauseMedia() {
     $('.swiper-slide').each(function() {
@@ -23,6 +33,9 @@ jQuery(function($) {
 
   // Function to initialize (or reinitialize) the sliders
   function initSwipers() {
+    // Show preloader while initializing
+    showPreloader();
+
     // If an instance already exists, destroy it to avoid conflicts
     if (mainSwiper && typeof mainSwiper.destroy === 'function') {
       mainSwiper.destroy(true, true);
@@ -54,6 +67,10 @@ jQuery(function($) {
         slideChange: function() {
           // Remove disabled classes to keep the arrows active
           $('.swiper-button-next, .swiper-button-prev').removeClass('swiper-button-disabled');
+        },
+        init: function() {
+          // Hide preloader when initialization is done
+          hidePreloader();
         }
       }
     });
