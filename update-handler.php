@@ -1,15 +1,24 @@
-
 <?php
-class Emu_Product_Gallery_Updater {
-    private $api_url = 'https://raw.githubusercontent.com/emuplugins/emu-product-gallery/refs/heads/main/info.json';
 
-    public function __construct() {
+if (!defined('ABSPATH')) {
+    exit;
+}
+if ( ! class_exists( 'Emu_Updater' ) ) {
+    
+class Emu_Updater {
+    private $plugin_slug;
+    private $api_url;
+
+    public function __construct($plugin_slug) {
+        $this->plugin_slug = $plugin_slug;
+        $this->api_url = 'https://raw.githubusercontent.com/emuplugins/' . $this->plugin_slug . '/refs/heads/main/info.json';
+
         add_filter('plugins_api', [$this, 'plugin_info'], 20, 3);
         add_filter('site_transient_update_plugins', [$this, 'check_for_update']);
     }
 
     public function plugin_info($res, $action, $args) {
-        if ($action !== 'plugin_information' || $args->slug !== 'emu-product-gallery') {
+        if ($action !== 'plugin_information' || $args->slug !== $this->plugin_slug) {
             return $res;
         }
 
@@ -51,11 +60,11 @@ class Emu_Product_Gallery_Updater {
             return $transient;
         }
 
-        $current_version = get_plugin_data(__DIR__ . '/emu-product-gallery.php')['Version'];
+        $current_version = get_plugin_data(WP_PLUGIN_DIR . '/' . $this->plugin_slug . '/' . $this->plugin_slug . '.php')['Version'];
         if (version_compare($current_version, $plugin_info->version, '<')) {
-            $transient->response['emu-product-gallery/emu-product-gallery.php'] = (object) [
+            $transient->response[$this->plugin_slug . '/' . $this->plugin_slug . '.php'] = (object) [
                 'slug'        => $plugin_info->slug,
-                'plugin'      => 'emu-product-gallery/emu-product-gallery.php',
+                'plugin'      => $this->plugin_slug . '/' . $this->plugin_slug . '.php',
                 'new_version' => $plugin_info->version,
                 'package'     => $plugin_info->download_url,
                 'tested'      => $plugin_info->tested,
@@ -65,10 +74,11 @@ class Emu_Product_Gallery_Updater {
         return $transient;
     }
 }
+}
 
-new Emu_Product_Gallery_Updater();
+new Emu_Updater($plugin_slug);
 
-add_filter('plugin_action_links_emu-product-gallery/emu-product-gallery.php', function($actions) {
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), function($actions) {
     $slug = basename(__DIR__);
     $url = wp_nonce_url(admin_url("plugins.php?force-check-update=$slug"), "force_check_update_$slug");
     $actions['check_update'] = '<a href="' . esc_url($url) . '">Check for Update</a>';
@@ -94,6 +104,10 @@ add_action('admin_notices', function() {
 
 add_filter('upgrader_post_install', function($response, $hook_extra, $result) {
     global $wp_filesystem;
+
+    if (!function_exists('get_filesystem_method')) {
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+    }
 
     $current_plugin_slug = basename(__DIR__);
     $proper_destination = WP_PLUGIN_DIR . '/' . $current_plugin_slug;
