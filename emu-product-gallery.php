@@ -3,7 +3,7 @@
 Plugin Name: Emu Product Gallery
 Plugin URI: https://example.com/emu-product-gallery
 Description: A plugin to display image and YouTube video gallery sliders.
-Version: 1.1.4
+Version: 1.1.5
 Author: Emu Plugins
 Author URI: https://aganrdagency.com
 */
@@ -11,17 +11,22 @@ Author URI: https://aganrdagency.com
 if (!defined('ABSPATH')) {
     exit;
 }
+
 // Obtendo o nome do plugin e removendo o sufixo '-main'
 $plugin_slug = rtrim(plugin_dir_path(__FILE__), '/') ;
 $plugin_slug = basename($plugin_slug);
 if (substr($plugin_slug, -5) === '-main') {
     $plugin_slug = substr($plugin_slug, 0, -5); // Remove o sufixo '-main'
 }
+
+
 require_once plugin_dir_path(__FILE__) . 'update-handler.php';
 require_once plugin_dir_path(__FILE__) . 'includes/metaboxes.php';
 require_once plugin_dir_path(__FILE__) . 'includes/option_page.php';
+
 // Enqueueing plugin CSS and JS
 function emu_product_gallery_enqueue_assets() {
+    
     // Enqueue Swiper CSS
     wp_enqueue_style('swiper-style', 'https://unpkg.com/swiper/swiper-bundle.min.css', array(), null);
 
