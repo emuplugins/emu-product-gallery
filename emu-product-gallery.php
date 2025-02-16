@@ -15,15 +15,31 @@ require_once plugin_dir_path(__FILE__) . 'includes/option_page.php';
 
 // Sistema de atualização do plugin
 
-$plugin_slug = basename(__DIR__);
-if (substr($plugin_slug, -5) === '-main') {
-    $plugin_slug = substr($plugin_slug, 0, -5);
-}
-$self_plugin_dir = basename(__DIR__);
+// Inicialização otimizada (fora da classe)
+add_action('admin_init', function() {
+    // Carrega apenas no admin e verifica necessidade
+    if (!current_user_can('update_plugins')) return;
 
-require_once plugin_dir_path(__FILE__) . 'update-handler.php';
+    $plugin_slug = basename(__DIR__);
+    if (substr($plugin_slug, -5) === '-main') {
+        $plugin_slug = substr($plugin_slug, 0, -5);
+    }
+    $self_plugin_dir = basename(__DIR__);
 
-new Emu_Updater($plugin_slug, $self_plugin_dir);
+    require_once plugin_dir_path(__FILE__) . 'update-handler.php';
+
+    // Self Update
+    new Emu_Updater($plugin_slug, $self_plugin_dir);
+    
+// Força verificação de atualizações
+add_action('admin_init', function() {
+    wp_update_plugins();
+});
+// Atualizações de terceiros
+add_action('load-update-core.php', 'emu_load_plugin_updates', 6);
+add_action('load-plugins.php', 'emu_load_plugin_updates', 6);
+
+});
 
 
 // Enqueueing plugin CSS and JS
