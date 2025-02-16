@@ -10,7 +10,9 @@ Author URI: https://aganrdagency.com
 
 if (!defined('ABSPATH')) exit;
 
-require_once 'update_handler.php';
+require_once plugin_dir_path(__FILE__) . 'update-handler.php';
+require_once plugin_dir_path(__FILE__) . 'includes/metaboxes.php';
+require_once plugin_dir_path(__FILE__) . 'includes/option_page.php';
 
 // Configuração do auto-update para o próprio plugin
 $plugin_slug = basename(__DIR__);
@@ -21,9 +23,6 @@ $self_plugin_dir = basename(__DIR__);
 
 new Emu_Updater($plugin_slug, $self_plugin_dir);
 
-require_once plugin_dir_path(__FILE__) . 'update-handler.php';
-require_once plugin_dir_path(__FILE__) . 'includes/metaboxes.php';
-require_once plugin_dir_path(__FILE__) . 'includes/option_page.php';
 
 // Enqueueing plugin CSS and JS
 function emu_product_gallery_enqueue_assets() {
