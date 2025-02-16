@@ -8,17 +8,17 @@ Author: Emu Plugins
 Author URI: https://aganrdagency.com
 */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+if (!defined('ABSPATH')) exit;
 
+require_once 'update_handler.php';
 
-
-$plugin_slug = basename(__DIR__);  // Diretório do plugin
+// Configuração do auto-update para o próprio plugin
+$plugin_slug = basename(__DIR__);
 if (substr($plugin_slug, -5) === '-main') {
-    $plugin_slug = substr($plugin_slug, 0, -5); // Remove o sufixo '-main'
+    $plugin_slug = substr($plugin_slug, 0, -5);
 }
-$plugin_dir = basename(__DIR__); // Mantemos o diretório original para referência
+$self_plugin_dir = basename(__DIR__);
+new Emu_Updater($plugin_slug, $self_plugin_dir);
 
 require_once plugin_dir_path(__FILE__) . 'update-handler.php';
 require_once plugin_dir_path(__FILE__) . 'includes/metaboxes.php';
