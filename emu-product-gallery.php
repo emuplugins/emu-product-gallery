@@ -25,8 +25,6 @@ require_once plugin_dir_path(__FILE__) . 'update-handler.php';
 
 new Emu_Updater($plugin_slug, $self_plugin_dir);
 
-add_action('upgrader_process_complete', 'emu_handle_plugin_update', 10, 2);
-
 
 // Enqueueing plugin CSS and JS
 function emu_product_gallery_enqueue_assets() {
