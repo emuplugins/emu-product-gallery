@@ -10,7 +10,6 @@ Author URI: https://aganrdagency.com
 
 if (!defined('ABSPATH')) exit;
 
-require_once plugin_dir_path(__FILE__) . 'update-handler.php';
 require_once plugin_dir_path(__FILE__) . 'includes/metaboxes.php';
 require_once plugin_dir_path(__FILE__) . 'includes/option_page.php';
 
@@ -25,6 +24,7 @@ $self_plugin_dir = basename(__DIR__);
 require_once plugin_dir_path(__FILE__) . 'update-handler.php';
 
 new Emu_Updater($plugin_slug, $self_plugin_dir);
+
 add_action('upgrader_process_complete', 'emu_handle_plugin_update', 10, 2);
 
 
