@@ -18,6 +18,7 @@ if (substr($plugin_slug, -5) === '-main') {
     $plugin_slug = substr($plugin_slug, 0, -5);
 }
 $self_plugin_dir = basename(__DIR__);
+
 new Emu_Updater($plugin_slug, $self_plugin_dir);
 
 require_once plugin_dir_path(__FILE__) . 'update-handler.php';
