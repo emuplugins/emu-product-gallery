@@ -10,6 +10,13 @@ Author URI: https://aganrdagency.com
 
 if (!defined('ABSPATH')) exit;
 
+// Cancela qualquer tentativa de traduzir o plugin
+
+add_action('init', function () {
+    load_plugin_textdomain('emu-easy-attribute', false, false);
+});
+
+
 require_once plugin_dir_path(__FILE__) . 'includes/metaboxes.php';
 require_once plugin_dir_path(__FILE__) . 'includes/option_page.php';
 
