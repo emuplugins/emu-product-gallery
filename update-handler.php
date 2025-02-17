@@ -1,6 +1,8 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
+// Self Update
+
 if (!class_exists('Emu_Updater')) {
     class Emu_Updater {
         private $api_url;
