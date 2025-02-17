@@ -53,9 +53,16 @@ if (!class_exists('Emu_Updater')) {
 
         public function check_for_update($transient) {
 
-
             if (empty($transient->checked)) {
                 return $transient;
+            }
+        
+            // Usa uma variável estática para armazenar a resposta
+            static $cached_response = null;
+        
+            // Se já tivermos uma resposta armazenada, retornamos sem fazer nova requisição
+            if ($cached_response !== null) {
+                return $cached_response;
             }
         
             // Garante que a verificação ocorra apenas uma vez por execução PARA ESTE PLUGIN
@@ -76,11 +83,7 @@ if (!class_exists('Emu_Updater')) {
         
             // Caminho correto considerando o diretório real
             $plugin_file_path = $this->plugin_dir . '/' . $this->plugin_slug . '.php';
-            $plugin_file_full_path = WP_PLUGIN_DIR . '/' . $plugin_file_path;
-        
-            // Usando get_file_data para obter a versão do plugin
-            $plugin_headers = get_file_data($plugin_file_full_path, array('Version' => 'Version'));
-            $current_version = $plugin_headers['Version'];
+            $current_version = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin_file_path)['Version'];
         
             if (version_compare($current_version, $plugin_info->version, '<')) {
                 // Chave corrigida usando diretório real
@@ -93,8 +96,13 @@ if (!class_exists('Emu_Updater')) {
                     'requires'    => $plugin_info->requires
                 ];
             }
+        
+            // Armazena a resposta na variável estática
+            $cached_response = $transient;
+        
             return $transient;
         }
+        
 
         public function auto_reactivate_plugin_after_update($upgrader_object, $options) {
             $plugin_file = $this->plugin_dir . '/' . $this->plugin_slug . '.php';
