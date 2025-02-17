@@ -52,21 +52,25 @@ if (!class_exists('Emu_Updater')) {
             if (empty($transient->checked)) {
                 return $transient;
             }
-
+        
             $remote = wp_remote_get($this->api_url);
             if (is_wp_error($remote)) {
                 return $transient;
             }
-
+        
             $plugin_info = json_decode(wp_remote_retrieve_body($remote));
             if (!$plugin_info) {
                 return $transient;
             }
-
+        
             // Caminho correto considerando o diretório real
             $plugin_file_path = $this->plugin_dir . '/' . $this->plugin_slug . '.php';
-            $current_version = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin_file_path)['Version'];
-
+            $plugin_file_full_path = WP_PLUGIN_DIR . '/' . $plugin_file_path;
+        
+            // Usando get_file_data para obter a versão do plugin
+            $plugin_headers = get_file_data($plugin_file_full_path, array('Version' => 'Version'));
+            $current_version = $plugin_headers['Version'];
+        
             if (version_compare($current_version, $plugin_info->version, '<')) {
                 // Chave corrigida usando diretório real
                 $transient->response[$plugin_file_path] = (object) [
