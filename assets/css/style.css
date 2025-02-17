@@ -111,3 +111,38 @@ transition:opacity 0.2s
     margin:auto;
 }
 
+
+/* Rounded slider */
+
+.emu-main-slider{
+    border-radius:15px;
+    overflow: hidden
+}
+.emu-thumb-slider .swiper-slide {
+    filter: brightness(0.7);
+    opacity: 1!important;
+    transition:all .2s!important;
+    background-color: #00000020;
+    border-radius:15px;
+    overflow: hidden;
+}
+.emu-thumb-slider .swiper-slide-thumb-active{
+    filter: brightness(1) !important;
+    background-color: white
+}
+.swiper-button-next, .swiper-button-prev{
+    border-radius:15px;
+    bottom:20px;
+    top:unset!important;
+    width:60px;
+    height: 60px;
+    aspect-ratio: 1!important;
+    padding:10px;
+}
+
+.swiper-button-next:after, .swiper-button-prev:after{
+    
+    font-size:1.7em!important;
+}
+
+/* Rounded slider */
