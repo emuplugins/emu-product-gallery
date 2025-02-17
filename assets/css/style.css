@@ -70,6 +70,7 @@
     aspect-ratio: 1 !important;
     cursor: pointer !important;
     pointer-events: none;
+    background-color:white;
 }
 
 /* Navigation Arrow Styling */
