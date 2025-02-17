@@ -119,17 +119,10 @@ transition:opacity 0.2s
     overflow: hidden
 }
 .emu-thumb-slider .swiper-slide {
-    filter: brightness(0.7);
-    opacity: 1!important;
-    transition:all .2s!important;
-    background-color: #00000020;
     border-radius:15px;
     overflow: hidden;
 }
-.emu-thumb-slider .swiper-slide-thumb-active{
-    filter: brightness(1) !important;
-    background-color: white
-}
+
 .emu-main-slider .swiper-button-next, .emu-main-slider .swiper-button-prev {
     border-radius:15px;
     bottom:20px!important;
@@ -146,3 +139,15 @@ transition:opacity 0.2s
 }
 
 /* Rounded slider */
+
+/* transitions */
+.emu-thumb-slider .swiper-slide {
+    filter: brightness(0.7);
+    opacity: 1!important;
+    transition:all .2s!important;
+    background-color: #00000020;
+}
+.emu-thumb-slider .swiper-slide-thumb-active{
+    filter: brightness(1) !important;
+    background-color: white
+}
