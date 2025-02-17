@@ -130,7 +130,7 @@ transition:opacity 0.2s
     filter: brightness(1) !important;
     background-color: white
 }
-.emu-product-gallery-wrapper .swiper-button-next, .emu-product-gallery-wrapper .swiper-button-prev{
+.emu-main-slider .swiper-button-next, .emu-main-slider .swiper-button-prev {
     border-radius:15px;
     bottom:20px!important;
     top:unset!important;
@@ -140,7 +140,7 @@ transition:opacity 0.2s
     padding:10px;
 }
 
-.emu-product-gallery-wrapper .swiper-button-next:after, .emu-product-gallery-wrapper .swiper-button-prev:after{
+.emu-main-slider .swiper-button-next:after, .emu-main-slider .swiper-button-prev:after {
     
     font-size:1.7em!important;
 }
