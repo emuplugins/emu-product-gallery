@@ -51,18 +51,10 @@ if (!class_exists('Emu_Updater')) {
             return $res;
         }
 
-        public function check_for_update($transient) {
+           public function check_for_update($transient) {
 
             if (empty($transient->checked)) {
                 return $transient;
-            }
-        
-            // Usa uma variável estática para armazenar a resposta
-            static $cached_response = null;
-        
-            // Se já tivermos uma resposta armazenada, retornamos sem fazer nova requisição
-            if ($cached_response !== null) {
-                return $cached_response;
             }
         
             // Garante que a verificação ocorra apenas uma vez por execução PARA ESTE PLUGIN
@@ -70,21 +62,21 @@ if (!class_exists('Emu_Updater')) {
                 return $transient;
             }
             $transient->emu_updater_checked = true; // Flag apenas para este carregamento
-        
+
             $remote = wp_remote_get($this->api_url);
             if (is_wp_error($remote)) {
                 return $transient;
             }
-        
+
             $plugin_info = json_decode(wp_remote_retrieve_body($remote));
             if (!$plugin_info) {
                 return $transient;
             }
-        
+
             // Caminho correto considerando o diretório real
             $plugin_file_path = $this->plugin_dir . '/' . $this->plugin_slug . '.php';
             $current_version = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin_file_path)['Version'];
-        
+
             if (version_compare($current_version, $plugin_info->version, '<')) {
                 // Chave corrigida usando diretório real
                 $transient->response[$plugin_file_path] = (object) [
@@ -96,13 +88,8 @@ if (!class_exists('Emu_Updater')) {
                     'requires'    => $plugin_info->requires
                 ];
             }
-        
-            // Armazena a resposta na variável estática
-            $cached_response = $transient;
-        
             return $transient;
         }
-        
 
         public function auto_reactivate_plugin_after_update($upgrader_object, $options) {
             $plugin_file = $this->plugin_dir . '/' . $this->plugin_slug . '.php';
@@ -139,13 +126,6 @@ if (substr($plugin_slug, -5) === '-main') {
 }
 $desired_plugin_dir = $plugin_slug; // Nome que desejamos para a pasta
 $self_plugin_dir = $plugin_dir_unsanitized; // Nome atual (pode conter "-main")
-
-// Filtro para exibir o link de "Verificar Atualizações"
-add_filter('plugin_action_links_' . $self_plugin_dir . '/' . $plugin_slug . '.php', function($actions) use ($self_plugin_dir) {
-    $url = wp_nonce_url(admin_url("plugins.php?force-check-update=$self_plugin_dir"), "force_check_update_$self_plugin_dir");
-    $actions['check_update'] = '<a href="' . esc_url($url) . '">Verificar Atualizações</a>';
-    return $actions;
-});
 
 // Após a instalação/atualização, move o plugin para o diretório desejado
 add_filter('upgrader_post_install', function($response, $hook_extra, $result) use ($desired_plugin_dir) {
@@ -196,3 +176,4 @@ add_action('upgrader_process_complete', function($upgrader_object, $options) use
         }
     }
 }, 10, 2);
+
