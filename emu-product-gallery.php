@@ -32,9 +32,12 @@ require_once plugin_dir_path(__FILE__) . 'update-handler.php';
 
 new Emu_Updater($plugin_slug, $self_plugin_dir);
 
-
 // Enqueueing plugin CSS and JS
 function emu_product_gallery_enqueue_assets() {
+    
+    if (is_admin()) {
+        return;
+    }
     
     // Enqueue Swiper CSS
     wp_enqueue_style('swiper-style', 'https://unpkg.com/swiper/swiper-bundle.min.css', array(), null);
@@ -47,15 +50,20 @@ function emu_product_gallery_enqueue_assets() {
 
     // Enqueue your plugin's JS
     wp_enqueue_script('emu-product-gallery-script', plugin_dir_url(__FILE__) . 'assets/js/script.js', array('swiper-script', 'jquery'), null, true);
+    
 }
-add_action('wp_enqueue_scripts', 'emu_product_gallery_enqueue_assets');
 
 // Including the slider shortcode
 function emu_product_gallery_include_slider_shortcode() {
+    
+    if (is_admin()) {
+        return;
+    }
     // Includes the file containing the shortcode
     if (file_exists(plugin_dir_path(__FILE__) . 'includes/slider_template.php')) {
         require_once plugin_dir_path(__FILE__) . 'includes/slider_template.php';
     }
 }
 
+add_action('wp_enqueue_scripts', 'emu_product_gallery_enqueue_assets');
 add_action('init', 'emu_product_gallery_include_slider_shortcode');
