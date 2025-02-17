@@ -1,6 +1,9 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
+if (!is_admin()) {
+    exit;
+}
 // Self Update
 
 if (!class_exists('Emu_Updater')) {
@@ -52,25 +55,21 @@ if (!class_exists('Emu_Updater')) {
             if (empty($transient->checked)) {
                 return $transient;
             }
-        
+
             $remote = wp_remote_get($this->api_url);
             if (is_wp_error($remote)) {
                 return $transient;
             }
-        
+
             $plugin_info = json_decode(wp_remote_retrieve_body($remote));
             if (!$plugin_info) {
                 return $transient;
             }
-        
+
             // Caminho correto considerando o diretório real
             $plugin_file_path = $this->plugin_dir . '/' . $this->plugin_slug . '.php';
-            $plugin_file_full_path = WP_PLUGIN_DIR . '/' . $plugin_file_path;
-        
-            // Usando get_file_data para obter a versão do plugin
-            $plugin_headers = get_file_data($plugin_file_full_path, array('Version' => 'Version'));
-            $current_version = $plugin_headers['Version'];
-        
+            $current_version = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin_file_path)['Version'];
+
             if (version_compare($current_version, $plugin_info->version, '<')) {
                 // Chave corrigida usando diretório real
                 $transient->response[$plugin_file_path] = (object) [
@@ -120,48 +119,6 @@ if (substr($plugin_slug, -5) === '-main') {
 }
 $desired_plugin_dir = $plugin_slug; // Nome que desejamos para a pasta
 $self_plugin_dir = $plugin_dir_unsanitized; // Nome atual (pode conter "-main")
-
-
-
-
-
-add_action('current_screen', function($screen) use ($self_plugin_dir, $plugin_slug) {
-    if (!is_admin()) {
-        return;
-    }
-
-    // Verifica se a tela atual é uma das permitidas
-    $allowed_screens = [
-        'update-core',
-        'plugins',
-        'themes',
-        'plugin-install',
-        'theme-install'
-    ];
-
-    if (in_array($screen->id, $allowed_screens)) {
-
-// Ação para forçar a verificação de atualizações
-add_action('admin_init', function() use ($self_plugin_dir) {
-    if (isset($_GET['force-check-update']) && $_GET['force-check-update'] === $self_plugin_dir) {
-        check_admin_referer("force_check_update_$self_plugin_dir");
-        delete_site_transient('update_plugins');
-        wp_safe_redirect(admin_url("plugins.php?checked-update=$self_plugin_dir"));
-        exit;
-    }
-});
-
-// Notificação após a verificação
-add_action('admin_notices', function() use ($self_plugin_dir) {
-    if (isset($_GET['checked-update']) && $_GET['checked-update'] === $self_plugin_dir) {
-        echo '<div class="notice notice-success"><p>Verificação de atualizações concluída!</p></div>';
-    }
-});
-}
-
-});
-    
-
 
 // Filtro para exibir o link de "Verificar Atualizações"
 add_filter('plugin_action_links_' . $self_plugin_dir . '/' . $plugin_slug . '.php', function($actions) use ($self_plugin_dir) {
