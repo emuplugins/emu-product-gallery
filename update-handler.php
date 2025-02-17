@@ -47,28 +47,23 @@ if (!class_exists('Emu_Updater')) {
                 return $transient;
             }
             
-            // Cria uma flag única para cada plugin
             $flag_key = 'emu_updater_checked_' . $this->plugin_slug;
             if (isset($transient->$flag_key) && $transient->$flag_key) {
                 return $transient;
             }
             $transient->$flag_key = true;
             
-            // Obtém informações sobre o plugin
             $plugin_info = $this->get_plugin_info();
             if (!$plugin_info) {
                 return $transient;
             }
             
-            // Define o caminho do plugin
             $plugin_basename  = $this->plugin_dir . '/' . $this->plugin_slug . '.php';
             $plugin_file_path = WP_PLUGIN_DIR . '/' . $plugin_basename;
             
-            // Obtém a versão atual a partir dos cabeçalhos do plugin
             $plugin_headers = get_file_data($plugin_file_path, ['Version' => 'Version']);
             $current_version = $plugin_headers['Version'];
             
-            // Se houver nova versão, adiciona as informações ao transient
             if (version_compare($current_version, $plugin_info->version, '<')) {
                 $transient->response[$plugin_basename] = (object) [
                     'slug'        => $this->plugin_slug,
@@ -85,7 +80,6 @@ if (!class_exists('Emu_Updater')) {
 
         private function get_plugin_info() {
             $cache_key = 'emu_plugin_info_' . $this->plugin_slug;
-            // Tenta recuperar as informações via transient (único para cada plugin)
             $plugin_info = get_transient($cache_key);
             if ($plugin_info !== false) {
                 return $plugin_info;
@@ -101,7 +95,6 @@ if (!class_exists('Emu_Updater')) {
                 return false;
             }
 
-            // Armazena as informações por 1 hora
             set_transient($cache_key, $plugin_info, HOUR_IN_SECONDS);
 
             return $plugin_info;
@@ -129,7 +122,6 @@ if (!class_exists('Emu_Updater')) {
             }
         }
 
-        // Limpa o transient ao recarregar a página
         public function clear_plugin_transients() {
             $cache_key = 'emu_plugin_info_' . $this->plugin_slug;
             delete_transient($cache_key);
