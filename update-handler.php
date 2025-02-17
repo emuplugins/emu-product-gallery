@@ -52,6 +52,15 @@ if (!class_exists('Emu_Updater')) {
         }
 
         public function check_for_update($transient) {
+
+
+            // Executa a verificação apenas uma vez por execução
+            static $already_checked = false;
+            if ($already_checked) {
+                return $transient;
+            }
+            $already_checked = true;
+
             if (empty($transient->checked)) {
                 return $transient;
             }
