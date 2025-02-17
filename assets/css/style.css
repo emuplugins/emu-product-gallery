@@ -132,10 +132,10 @@ transition:opacity 0.2s
 }
 .swiper-button-next, .swiper-button-prev{
     border-radius:15px;
-    bottom:20px;
+    bottom:20px!important;
     top:unset!important;
-    width:60px;
-    height: 60px;
+    width:60px!important;
+    height: 60px!important;
     aspect-ratio: 1!important;
     padding:10px;
 }
