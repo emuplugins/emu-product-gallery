@@ -50,7 +50,7 @@ function emu_product_gallery_shortcode($atts) {
     if (empty($processing_order)) {
         $processing_order[] = array(
             'type' => 'field',
-            'value' => 'emu_product_gallery_field'
+            'value' => '_product_image_gallery'
         );
     }
 

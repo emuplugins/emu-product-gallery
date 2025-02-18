@@ -26,7 +26,7 @@ add_action('add_meta_boxes', 'emu_product_gallery_add_metabox');
 // Displays the content of the metabox
 function display_metabox_gallery_video($post) {
     // Retrieves saved data
-    $gallery = get_post_meta($post->ID, 'emu_product_gallery_field', true);
+    $gallery = get_post_meta($post->ID, '_product_image_gallery', true);
 
     // Ensures $gallery is an array
     if (!is_array($gallery)) {
@@ -46,7 +46,7 @@ function display_metabox_gallery_video($post) {
              // Checks if it's a YouTube video
              $is_youtube = preg_match('/(?:youtube\.com\/(?:[^\/]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S+?[\?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $item, $matches);
              $video_id = $is_youtube ? $matches[1] : '';
-             $thumbnail = $video_id ? 'https://img.youtube.com/vi/' . $video_id . '/maxresdefault.jpg' : $item;
+             $thumbnail = $video_id ? 'https://img.youtube.com/vi/' . $video_id . '/sddefault.jpg' : $item;
          ?>
             <li class="<?php echo $video_id ? 'video-item' : 'image-item'; ?>">
                 <img 
@@ -127,7 +127,7 @@ function display_metabox_gallery_video($post) {
     <?php
 }
 
-// Saves the data from the metabox (unchanged)
+// Saves the data from the metabox
 function save_metabox_gallery_video($post_id) {
     if (!isset($_POST['gallery_video_nonce']) || !wp_verify_nonce($_POST['gallery_video_nonce'], 'save_gallery_video')) {
         return $post_id;
@@ -143,9 +143,9 @@ function save_metabox_gallery_video($post_id) {
 
     if (isset($_POST['gallery'])) {
         $gallery_urls = json_decode(stripslashes($_POST['gallery']), true);
-        update_post_meta($post_id, 'emu_product_gallery_field', $gallery_urls);
+        update_post_meta($post_id, '_product_image_gallery', $gallery_urls);
     } else {
-        delete_post_meta($post_id, 'emu_product_gallery_field');
+        delete_post_meta($post_id, '_product_image_gallery');
     }
 
     return $post_id;
