@@ -13,7 +13,7 @@ function emu_product_gallery_shortcode($atts) {
     if (!function_exists('getYoutubeThumbnail')) {
         function getYoutubeThumbnail($url) {
             preg_match('/(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S+?[\?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $matches);
-            return !empty($matches[1]) ? 'https://img.youtube.com/vi/'.$matches[1].'/sddefault.jpg' : '';
+            return !empty($matches[1]) ? 'https://i.ytimg.com/vi/'.$matches[1].'/maxres2.jpg' : '';
         }
     }
 
@@ -167,7 +167,7 @@ foreach ($processing_order as $item) {
     }
 
     // Verifica se é um vídeo
-    $is_video = strpos($embed_url, 'youtube.com') !== false || strpos($embed_url, 'youtu.be') !== false || pathinfo($embed_url, PATHINFO_EXTENSION) === 'mp4';
+    $is_video = strpos($embed_url, 'youtube.com') !== false || strpos($embed_url, 'youtu.be') !== false || strpos($embed_url, 'youtu.be') !== false || pathinfo($embed_url, PATHINFO_EXTENSION) === 'mp4';
 
     // Criar slides
     $slides_html .= '<div class="swiper-slide">';
