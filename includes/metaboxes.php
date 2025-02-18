@@ -163,8 +163,8 @@ function display_metabox_gallery_video($post) {
             font-size: 3em;
             background-color: #00000070;
         }
-        .woocommerce-product-images{ 
-            display: none !important; 
+        div#woocommerce-product-images {
+            display: none !important;
         }
     </style>
     <script>
