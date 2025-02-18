@@ -166,3 +166,18 @@ transition:opacity 0.2s
     border-radius: 50%;
     pointer-events: none;
 }
+span.video-icon {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    display: flex
+;
+    top: 0;
+    color: white;
+    font-size: 3em;
+    background-color: #00000070;
+}
