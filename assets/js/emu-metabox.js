@@ -82,7 +82,7 @@ jQuery(document).ready(function($) {
     }
 
     // Gallery container resize logic
-const $galleryContainer = $('#gallery-container');
+const $galleryContainer = $('#gallery-list');
 
 const observer = new ResizeObserver(entries => {
     for (let entry of entries) {
