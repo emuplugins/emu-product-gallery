@@ -160,6 +160,9 @@ function display_metabox_gallery_video($post) {
             font-size: 3em;
             background-color: #00000070;
         }
+        .woocommerce-product-images{ 
+            display: none !important; 
+        }
     </style>
     <script>
     jQuery(document).ready(function($) { 
@@ -241,13 +244,3 @@ function move_gallery_metabox() {
     add_meta_box('gallery_video_metabox', 'Image and Video Gallery', 'display_metabox_gallery_video', 'post', 'side', 'low');
 }
 add_action('add_meta_boxes', 'move_gallery_metabox', 20);
-
-// Função para ocultar a galeria padrão do WooCommerce com CSS
-function hide_default_woocommerce_gallery() {
-    echo '<style>
-        .woocommerce_product_images { 
-            display: none !important; 
-        }
-    </style>';
-}
-add_action('admin_head', 'hide_default_woocommerce_gallery');
