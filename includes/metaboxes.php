@@ -3,25 +3,23 @@
 if (!defined('ABSPATH')) {
     exit;
 }
-// Retrieves the selected post types and uses them in the metabox code
+// Função para adicionar a metabox da galeria de imagem e vídeo
 function emu_product_gallery_add_metabox() {
-    // Retrieves the selected post types from the Options Page, ensuring it's an array
+    // Recupera os tipos de post selecionados da página de opções
     $emu_post_types = (array) get_option('emu_product_gallery_posttypes', array());
 
-    // Verifies if there are selected post types before adding the metabox
-    // Ensures that the array is not empty and contains valid post types
+    // Verifica se existem tipos de post válidos
     if (!empty($emu_post_types) && count(array_filter($emu_post_types)) > 0) {
         add_meta_box(
-            'gallery_video_metabox',            // Metabox ID
-            'Image and Video Gallery',          // Title
-            'display_metabox_gallery_video',    // Function to display the content
-            $emu_post_types,                   // Selected post types
-            'normal',                           // Context
-            'high'                              // Priority
+            'gallery_video_metabox',            // ID da metabox
+            'Image and Video Gallery',          // Título da metabox
+            'display_metabox_gallery_video',    // Função para exibir o conteúdo da metabox
+            $emu_post_types,                   // Tipos de post selecionados
+            'normal',                           // Contexto para a metabox ('normal' para a coluna principal)
+            'high'                              // Prioridade (high coloca no topo)
         );
     }
 }
-add_action('add_meta_boxes', 'emu_product_gallery_add_metabox');
 
 // Displays the content of the metabox
 function display_metabox_gallery_video($post) {
@@ -234,3 +232,22 @@ function emu_metabox_gallery_scripts($hook) {
     wp_enqueue_script('emu-metabox-gallery-script', $script_url, array('jquery'), '1.0', true);
 }
 add_action('admin_enqueue_scripts', 'emu_metabox_gallery_scripts');
+
+
+add_action('add_meta_boxes', 'emu_product_gallery_add_metabox');
+// Função para mover a metabox para abaixo da imagem destacada
+function move_gallery_metabox() {
+    remove_meta_box('gallery_video_metabox', 'post', 'normal');
+    add_meta_box('gallery_video_metabox', 'Image and Video Gallery', 'display_metabox_gallery_video', 'post', 'side', 'low');
+}
+add_action('add_meta_boxes', 'move_gallery_metabox', 20);
+
+// Função para ocultar a galeria padrão do WooCommerce com CSS
+function hide_default_woocommerce_gallery() {
+    echo '<style>
+        .woocommerce_product_images { 
+            display: none !important; 
+        }
+    </style>';
+}
+add_action('admin_head', 'hide_default_woocommerce_gallery');
