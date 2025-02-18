@@ -80,6 +80,7 @@ function display_metabox_gallery_video($post) {
     display: flex;
     gap: 10px;
     width:100%!important;
+    flex-wrap: wrap;
 }
 
 .gallery-list li {
@@ -121,7 +122,6 @@ function display_metabox_gallery_video($post) {
     color:white!important;
     border-color:#dc3232;
 }
-
     </style>
 
     <?php

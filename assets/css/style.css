@@ -152,10 +152,3 @@ transition:opacity 0.2s
     filter: brightness(1) !important;
     background-color: white
 }
-
-.gallery-list {
-    display: flex;
-    gap: 10px;
-    width: 100% !important;
-    flex-wrap: wrap;
-}
