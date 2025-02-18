@@ -65,9 +65,9 @@ function display_metabox_gallery_video($post) {
                 <li class="<?php echo $video_id ? 'video-item' : 'image-item'; ?>">
                     <img 
                         src="<?php echo esc_url($thumbnail); ?>" 
-                        style="width: 100px; height: 100px; object-fit: cover;">
+                        style="width: 100px; height: 100px; object-fit: cover; position:relative">
                     <a href="#" class="remove-item" data-url="<?php echo esc_url($item); ?>">Remove</a>
-                    <?php echo $video_id ? 'Video' : 'Image'; ?>
+                    <?php echo $video_id ? '<span class="video-icon" aria-label="Vídeo">▶</span> Video' : ''; ?>
                 </li>
             <?php endforeach; ?>
 
@@ -129,6 +129,30 @@ function display_metabox_gallery_video($post) {
             border-radius: 0.3em;
             color: white !important;
             border-color: #dc3232;
+        }
+        .video-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        color: white;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 5px 10px;
+        pointer-events: none;
+        }
+        span.video-icon {
+            position: absolute;
+        
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            color: white;
+            font-size: 3em;
+            background-color: #00000070;
         }
     </style>
     <?php

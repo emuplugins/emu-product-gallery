@@ -199,7 +199,7 @@ foreach ($processing_order as $item) {
     $thumbs_html .= '<div class="swiper-slide">';
     $thumbs_html .= sprintf('<img src="%s" alt="Thumb %d">', esc_url($thumb_url), $index + 1);
     if ($is_video) {
-        $thumbs_html .= '<span class="video-icon">▶</span>';
+        $thumbs_html .= '<span class="video-icon" aria-label="Vídeo">▶</span>';
     }
     $thumbs_html .= '</div>';
 }
