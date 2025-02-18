@@ -13,7 +13,7 @@ function emu_product_gallery_shortcode($atts) {
     if (!function_exists('getYoutubeThumbnail')) {
         function getYoutubeThumbnail($url) {
             preg_match('/(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S+?[\?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $matches);
-            return !empty($matches[1]) ? 'https://img.youtube.com/vi/'.$matches[1].'/maxresdefault.jpg' : '';
+            return !empty($matches[1]) ? 'https://img.youtube.com/vi/'.$matches[1].'/sddefault.jpg' : '';
         }
     }
     
