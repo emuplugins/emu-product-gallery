@@ -121,13 +121,23 @@ function emu_product_gallery_shortcode($atts) {
     
     foreach ($media_list as $index => $item) {
         $item = trim($item);
-        $embed_url = is_numeric($item) ? getImageUrlFromId($item) : (
-            strpos($item, 'youtu') !== false ? convertYoutubeUrlToEmbed($item) : $item
-        );
-        $thumb_url = is_numeric($item) ? getImageUrlFromId($item) : (
-            strpos($item, 'youtu') !== false ? getYoutubeThumbnail($item) : $item
-        );
-
+    
+        // Definir URLs de embed e thumbnail
+        if (is_numeric($item)) {
+            $embed_url = getImageUrlFromId($item);
+            $thumb_url = $embed_url;
+        } elseif (strpos($item, 'youtu') !== false) {
+            $embed_url = convertYoutubeUrlToEmbed($item);
+            $thumb_url = getYoutubeThumbnail($item);
+        } else {
+            $embed_url = $item;
+            $thumb_url = $item;
+        }
+    
+        // Definir se é um vídeo
+        $is_video = strpos($embed_url, 'youtube.com') !== false || pathinfo($embed_url, PATHINFO_EXTENSION) === 'mp4';
+    
+        // Criar slides
         $slides_html .= '<div class="swiper-slide">';
         if (strpos($embed_url, 'youtube.com') !== false) {
             $slides_html .= sprintf(
@@ -143,13 +153,13 @@ function emu_product_gallery_shortcode($atts) {
             $slides_html .= sprintf(
                 '<img src="%s" alt="Slide %d">',
                 esc_url($embed_url),
-                $index+1
+                $index + 1
             );
         } else {
-            $slides_html .= '<div class="swiper-slide">Error loading image</div>';
+            $slides_html .= '<div class="swiper-slide">Erro ao carregar imagem</div>';
         }
         $slides_html .= '</div>';
-
+    
         // Criar thumbnails com ícone de play para vídeos
         $thumbs_html .= '<div class="swiper-slide">';
         $thumbs_html .= sprintf('<img src="%s" alt="Thumb %d">', esc_url($thumb_url), $index + 1);
