@@ -53,7 +53,7 @@ function display_metabox_gallery_video($post) {
                 $video_id = $is_youtube ? $matches[1] : '';
                 // Se for vídeo do YouTube, define a miniatura, caso contrário, obtém a imagem ou usa a URL
                 if ($video_id) {
-                    $thumbnail = 'https://img.youtube.com/vi/' . $video_id . '/sddefault.jpg';
+                    $thumbnail = 'https://i.ytimg.com/vi/' . $video_id . '/maxres2.jpg';
                 } elseif (is_numeric($item)) {
                     // Se o item for um ID, obtém a URL da imagem
                     $thumbnail = wp_get_attachment_image_url($item, 'thumbnail');
