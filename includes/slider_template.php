@@ -150,11 +150,13 @@ function emu_product_gallery_shortcode($atts) {
         }
         $slides_html .= '</div>';
 
-        $thumbs_html .= sprintf(
-            '<div class="swiper-slide"><img src="%s" alt="Thumb %d"></div>',
-            esc_url($thumb_url),
-            $index+1
-        );
+        // Criar thumbnails com ícone de play para vídeos
+        $thumbs_html .= '<div class="swiper-slide">';
+        $thumbs_html .= sprintf('<img src="%s" alt="Thumb %d">', esc_url($thumb_url), $index + 1);
+        if ($is_video) {
+            $thumbs_html .= '<span class="video-icon">▶</span>';
+        }
+        $thumbs_html .= '</div>';
     }
 
     return '<div class="emu-product-gallery-wrapper loading" style="display:flex; flex-direction:row;">
