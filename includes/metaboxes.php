@@ -72,8 +72,8 @@ function display_metabox_gallery_video($post) {
 
         </ul>
         <!-- Botões para adicionar imagem e vídeo -->
-        <button type="button" id="add-gallery-image" class="button">Add Image</button>
-        <button type="button" id="add-gallery-video" class="button">Add Video</button>
+        <button type="button" id="add-gallery-image" class="button">Add media</button>
+        <button type="button" id="add-gallery-video" class="button">Youtube ▶ </button>
 
         <!-- Campo oculto para armazenar os IDs -->
         <input type="hidden" name="gallery" id="gallery" value="<?php echo esc_attr(json_encode($gallery)); ?>" />
