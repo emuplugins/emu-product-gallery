@@ -107,6 +107,7 @@ function display_metabox_gallery_video($post) {
             position: relative;
             overflow: hidden;
             line-height: 0;
+            border-radius:5px
         }
         .gallery-list img {
             max-width: 100% !important;
