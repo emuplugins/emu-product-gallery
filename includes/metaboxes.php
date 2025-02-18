@@ -171,17 +171,25 @@ function display_metabox_gallery_video($post) {
 
         const observer = new ResizeObserver(entries => {
             for (let entry of entries) {
+                // Verifica se o contêiner está com largura menor ou igual a 400px
                 if (entry.contentRect.width <= 400) {
-                    $galleryContainer.css({
-                        'display': 'grid',
-                        'grid-template-columns': 'repeat(3, 1fr)'
-                    });
+                    // Se for flex, altera para grid
+                    if (!$galleryContainer.hasClass('grid')) {
+                        $galleryContainer.css({
+                            'display': 'grid',
+                            'grid-template-columns': 'repeat(3, 1fr)'
+                        }).addClass('grid'); // Marca como grid
+                    }
                 } else {
-                    $galleryContainer.css('display', 'flex');
+                    // Se for grid, altera para flex
+                    if ($galleryContainer.hasClass('grid')) {
+                        $galleryContainer.css('display', 'flex').removeClass('grid'); // Marca como flex
+                    }
                 }
             }
         });
 
+        // Observe the gallery container
         observer.observe($galleryContainer[0]);
 
         // Make sure gallery list items take 100% width
