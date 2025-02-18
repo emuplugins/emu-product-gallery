@@ -83,10 +83,18 @@ function display_metabox_gallery_video($post) {
     
     <style>
         #gallery-container {
+            contain: layout; /* Necessário para @container funcionar */
             display: flex;
-            flex-direction: row;
             flex-wrap: wrap;
-            gap: 0px 10px;
+            gap: 10px;
+        }
+
+        /* Se o #gallery-container for menor ou igual a 400px, muda para grid */
+        @container (max-width: 400px) {
+            #gallery-container {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
         .gallery-list {
             display: flex;
