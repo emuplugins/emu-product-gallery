@@ -103,12 +103,16 @@ function display_metabox_gallery_video($post) {
             width: 30%;
             max-width: 100px;
         }
+        .item-thumb-wrapper{
+            position: relative;
+            overflow: hidden;
+            line-height: 0;
+        }
         .gallery-list img {
             max-width: 100% !important;
             height: auto !important;
             aspect-ratio: 1;
             object-fit: cover;
-            border-radius: 5px;
         }
         .gallery-list .remove-item {
             color: white;
