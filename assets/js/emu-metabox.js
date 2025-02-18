@@ -68,7 +68,7 @@ jQuery(document).ready(function($) {
     function renderGallery(gallery) {
         let html = '';
         gallery.forEach(item => {
-            const isYoutube = item.match(/(youtube\.com\/(?:[^\/]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S+?[\?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+            const isYoutube = item.match(/(?:youtube\.com\/(?:shorts\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
             const videoId = isYoutube ? isYoutube[2] : '';
             const thumbnail = isYoutube ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : item;
             html += `

@@ -49,7 +49,7 @@ function display_metabox_gallery_video($post) {
         <ul class="gallery-list">
             <?php foreach ($gallery as $item): 
                 // Verifica se é um vídeo do YouTube
-                $is_youtube = preg_match('/(?:youtube\.com\/(?:[^\/]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S+?[\?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $item, $matches);
+                $is_youtube = preg_match('/(?:youtube\.com\/(?:shorts\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $item, $matches);
                 $video_id = $is_youtube ? $matches[1] : '';
                 // Se for vídeo do YouTube, define a miniatura, caso contrário, obtém a imagem ou usa a URL
                 if ($video_id) {

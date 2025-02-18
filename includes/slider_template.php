@@ -12,14 +12,14 @@ function emu_product_gallery_shortcode($atts) {
     /* --- Helper Functions --- */
     if (!function_exists('getYoutubeThumbnail')) {
         function getYoutubeThumbnail($url) {
-            preg_match('/(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S+?[\?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $matches);
+            preg_match('/(?:youtube\.com\/(?:shorts\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $matches);
             return !empty($matches[1]) ? 'https://i.ytimg.com/vi/'.$matches[1].'/maxres2.jpg' : '';
         }
     }
 
     if (!function_exists('convertYoutubeUrlToEmbed')) {
         function convertYoutubeUrlToEmbed($url) {
-            preg_match('/(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S+?[\?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $matches);
+            preg_match('/(?:youtube\.com\/(?:shorts\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $matches);
             return !empty($matches[1]) ? 'https://www.youtube.com/embed/'.$matches[1] : '';
         }
     }
