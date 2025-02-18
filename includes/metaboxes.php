@@ -63,11 +63,12 @@ function display_metabox_gallery_video($post) {
                 }
             ?>
                 <li class="<?php echo $video_id ? 'video-item' : 'image-item'; ?>" style="position:relative">
-                    <img 
-                        src="<?php echo esc_url($thumbnail); ?>" 
-                        style="width: 100px; height: 100px; object-fit: cover">
+                    <div class="item-thumb-wrapper">
+                        <img src="<?php echo esc_url($thumbnail); ?>" style="width: 100px; height: 100px; object-fit: cover">
+                        <?php echo $video_id ? '<span class="video-icon" aria-label="Vídeo">▶</span>' : ''; ?>
+                    </div>
                     <a href="#" class="remove-item" data-url="<?php echo esc_url($item); ?>">Remove</a>
-                    <?php echo $video_id ? '<span class="video-icon" aria-label="Vídeo">▶</span>' : ''; ?>
+                    
                 </li>
             <?php endforeach; ?>
 
