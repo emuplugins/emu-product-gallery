@@ -102,6 +102,9 @@ function display_metabox_gallery_video($post) {
             max-width: 100px;
             
         }
+        .gallery-list.grid li {
+            width:100%!important
+        }
         .item-thumb-wrapper{
             position: relative;
             overflow: hidden;
