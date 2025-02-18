@@ -102,12 +102,14 @@ function display_metabox_gallery_video($post) {
             gap: 5px;
             width: 30%;
             max-width: 100px;
+            
         }
         .item-thumb-wrapper{
             position: relative;
             overflow: hidden;
             line-height: 0;
-            border-radius:5px
+            border-radius:5px;
+            aspect-ratio:1!important;
         }
         .gallery-list img {
             max-width: 100% !important;
