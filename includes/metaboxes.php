@@ -161,6 +161,30 @@ function display_metabox_gallery_video($post) {
             background-color: #00000070;
         }
     </style>
+    <script>
+    jQuery(document).ready(function($) { 
+        // Logic for resizing the gallery container
+        const $galleryContainer = $('.gallery-list');
+
+        const observer = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                if (entry.contentRect.width <= 400) {
+                    $galleryContainer.css({
+                        'display': 'grid',
+                        'grid-template-columns': 'repeat(3, 1fr)'
+                    });
+                } else {
+                    $galleryContainer.css('display', 'flex');
+                }
+            }
+        });
+
+        observer.observe($galleryContainer[0]);
+
+        // Make sure gallery list items take 100% width
+        $('.gallery-list li').css('width', '100%');
+    });
+    </script>
     <?php
 }
 

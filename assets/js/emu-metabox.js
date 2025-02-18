@@ -80,22 +80,4 @@ jQuery(document).ready(function($) {
         });
         $('.gallery-list').html(html);
     }
-
-    // Gallery container resize logic
-const $galleryContainer = $('#gallery-list');
-
-const observer = new ResizeObserver(entries => {
-    for (let entry of entries) {
-        if (entry.contentRect.width <= 400) {
-            $galleryContainer.css({
-                'display': 'grid',
-                'grid-template-columns': 'repeat(3, 1fr)'
-            });
-        } else {
-            $galleryContainer.css('display', 'flex');
-        }
-    }
-});
-
-observer.observe($galleryContainer[0]);
 });
