@@ -10,14 +10,9 @@ Author URI: https://aganrdagency.com
 
 if (!defined('ABSPATH')) exit;
 
-// ==============================================================================================================
-// UPDATE SYSTEM
-// ==============================================================================================================
- 
-require_once plugin_dir_path(__FILE__) . 'update-handler.php';
-
 // Load backend files
 if (is_admin()) {
+    require_once plugin_dir_path(__FILE__) . 'update-handler.php';
     require_once plugin_dir_path(__FILE__) . 'includes/metaboxes.php';
     require_once plugin_dir_path(__FILE__) . 'includes/option_page.php';
 }

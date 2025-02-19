@@ -2,8 +2,6 @@
 
 if ( ! defined('ABSPATH')) exit;
 
-if ( ! is_admin()) return;
-
 if ( ! class_exists('Emu_Updater')) {
     class Emu_Updater {
         private $api_url;
