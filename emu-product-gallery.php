@@ -10,16 +10,14 @@ Author URI: https://aganrdagency.com
 
 if (!defined('ABSPATH')) exit;
 
-    $plugin_slug = basename(__DIR__);
-    if (substr($plugin_slug, -5) === '-main') {
-        $plugin_slug = substr($plugin_slug, 0, -5);
-    }
-    $self_plugin_dir = basename(__DIR__);
+// ==============================================================================================================
+// UPDATE SYSTEM
+// ==============================================================================================================
+ 
+require_once plugin_dir_path(__FILE__) . 'update-handler.php';
 
-// Sistema de atualização do plugin
+// Load backend files
 if (is_admin()) {
-    require_once plugin_dir_path(__FILE__) . 'update-handler.php';
-    new Emu_Updater($plugin_slug, $self_plugin_dir);
     require_once plugin_dir_path(__FILE__) . 'includes/metaboxes.php';
     require_once plugin_dir_path(__FILE__) . 'includes/option_page.php';
 }
