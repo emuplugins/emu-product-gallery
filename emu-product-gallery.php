@@ -2,7 +2,7 @@
 /*
 Plugin Name: Emu Product Gallery
 Description: A plugin to display image and YouTube video gallery sliders.
-Version: 1.1.9
+Version: 1.2
 Author: Emu Plugins
 */
 

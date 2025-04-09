@@ -5,11 +5,14 @@ if (!defined('ABSPATH')) {
 }
 
 function emu_product_gallery_shortcode($atts) {
-    // Get product_id and variation_id from attributes, if available
+
+    // Recupera o ID do produto e da variação se existirem
     $post_id = isset($atts['product_id']) ? intval($atts['product_id']) : get_the_ID();
     $variation_id = isset($atts['variation_id']) ? intval($atts['variation_id']) : 0;
 
     /* --- Helper Functions --- */
+
+    // Função para recuperar a thumb do youtube pela url
     if (!function_exists('getYoutubeThumbnail')) {
         function getYoutubeThumbnail($url) {
             preg_match('/(?:youtube\.com\/(?:shorts\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $matches);
@@ -17,6 +20,7 @@ function emu_product_gallery_shortcode($atts) {
         }
     }
 
+    // função para converter o url do yotube para um embed
     if (!function_exists('convertYoutubeUrlToEmbed')) {
         function convertYoutubeUrlToEmbed($url) {
             preg_match('/(?:youtube\.com\/(?:shorts\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $matches);
@@ -24,6 +28,7 @@ function emu_product_gallery_shortcode($atts) {
         }
     }
 
+    // função para puxar o url da imagem pelo id
     if (!function_exists('getImageUrlFromId')) {
         function getImageUrlFromId($image_id) {
             $image = wp_get_attachment_image_src($image_id, 'full');
@@ -33,7 +38,9 @@ function emu_product_gallery_shortcode($atts) {
 
     /* --- Attribute Processing --- */
     $processing_order = array();
+
     foreach ($atts as $key => $value) {
+
         if (is_numeric($key)) {
             $processing_order[] = array(
                 'type' => 'option',
@@ -45,6 +52,7 @@ function emu_product_gallery_shortcode($atts) {
                 'value' => $value
             );
         }
+
     }
 
     if (empty($processing_order)) {
@@ -60,80 +68,80 @@ function emu_product_gallery_shortcode($atts) {
     }
 
     /* --- Media List Construction --- */
-$media_list = array();
+    $media_list = array();
 
-foreach ($processing_order as $item) {
-    switch ($item['type']) {
-        case 'option':
-            switch ($item['value']) {
-                case 'thumbnail':
-                    if ($featured = get_the_post_thumbnail_url($post_id, 'full')) {
-                        $media_list[] = $featured;
-                    }
-                    break;
-                case 'woocommerce':
-                    // Main product gallery
-                    $gallery = get_post_meta($post_id, '_product_image_gallery', true);
-                    $gallery_ids = array_filter(explode(',', $gallery));
-                    foreach ($gallery_ids as $id) {
-                        // Verifica se é um ID de attachment ou URL direta
-                        $url = wp_get_attachment_url($id);
-                        if ($url) {
-                            $media_list[] = $url;
-                        } else {
-                            // Adiciona diretamente se for um link de URL
-                            $media_list[] = $id;
+    foreach ($processing_order as $item) {
+        switch ($item['type']) {
+            case 'option':
+                switch ($item['value']) {
+                    case 'thumbnail':
+                        if ($featured = get_the_post_thumbnail_url($post_id, 'full')) {
+                            $media_list[] = $featured;
                         }
-                    }
+                        break;
+                    case 'woocommerce':
+                        // Main product gallery
+                        $gallery = get_post_meta($post_id, '_product_image_gallery', true);
+                        $gallery_ids = array_filter(explode(',', $gallery));
+                        foreach ($gallery_ids as $id) {
+                            // Verifica se é um ID de attachment ou URL direta
+                            $url = wp_get_attachment_url($id);
+                            if ($url) {
+                                $media_list[] = $url;
+                            } else {
+                                // Adiciona diretamente se for um link de URL
+                                $media_list[] = $id;
+                            }
+                        }
 
-                    // Se for uma variação, adiciona sua imagem primeiro
-                    if ($variation_id) {
-                        $variation_gallery = get_post_meta($variation_id, '_product_image_gallery', true);
-                        if ($variation_gallery) {
-                            $variation_ids = array_filter(explode(',', $variation_gallery), 'is_numeric');
-                            if (!empty($variation_ids)) {
-                                $first_variation_image = wp_get_attachment_url($variation_ids[0]);
-                                if ($first_variation_image) {
-                                    array_unshift($media_list, $first_variation_image);
-                                } else {
-                                    array_unshift($media_list, $variation_ids[0]); // Para links diretos
+                        // Se for uma variação, adiciona sua imagem primeiro
+                        if ($variation_id) {
+                            $variation_gallery = get_post_meta($variation_id, '_product_image_gallery', true);
+                            if ($variation_gallery) {
+                                $variation_ids = array_filter(explode(',', $variation_gallery), 'is_numeric');
+                                if (!empty($variation_ids)) {
+                                    $first_variation_image = wp_get_attachment_url($variation_ids[0]);
+                                    if ($first_variation_image) {
+                                        array_unshift($media_list, $first_variation_image);
+                                    } else {
+                                        array_unshift($media_list, $variation_ids[0]); // Para links diretos
+                                    }
                                 }
                             }
                         }
+                        break;
+                }
+                break;
+            case 'field':
+            $meta_values = array();
+            $meta_keys = array_map('trim', explode(',', $item['value']));
+
+            foreach ($meta_keys as $meta_key) {
+                // Verificar se é o campo "_thumbnail_id" para pegar a imagem destacada
+                if ($meta_key === '_thumbnail_id') {
+                    // Recuperar o ID da imagem destacada
+                    $thumbnail_id = get_post_meta($post_id, '_thumbnail_id', true);
+                    if ($thumbnail_id) {
+                        // Adicionar a URL da imagem destacada
+                        $meta_values[] = wp_get_attachment_url($thumbnail_id);
                     }
-                    break;
+                } else {
+                    // Para outros campos de post_meta, o comportamento permanece o mesmo
+                    if ($content = get_post_meta($post_id, $meta_key, true)) {
+                        if (is_array($content)) {
+                            $meta_values = array_merge($meta_values, $content);
+                        } else {
+                            $meta_values = array_merge($meta_values, array_map('trim', explode(',', $content)));
+                        }
+                    }
+                }
             }
+
+            $media_list = array_merge($media_list, $meta_values);
             break;
-		   case 'field':
-		$meta_values = array();
-		$meta_keys = array_map('trim', explode(',', $item['value']));
 
-		foreach ($meta_keys as $meta_key) {
-			// Verificar se é o campo "_thumbnail_id" para pegar a imagem destacada
-			if ($meta_key === '_thumbnail_id') {
-				// Recuperar o ID da imagem destacada
-				$thumbnail_id = get_post_meta($post_id, '_thumbnail_id', true);
-				if ($thumbnail_id) {
-					// Adicionar a URL da imagem destacada
-					$meta_values[] = wp_get_attachment_url($thumbnail_id);
-				}
-			} else {
-				// Para outros campos de post_meta, o comportamento permanece o mesmo
-				if ($content = get_post_meta($post_id, $meta_key, true)) {
-					if (is_array($content)) {
-						$meta_values = array_merge($meta_values, $content);
-					} else {
-						$meta_values = array_merge($meta_values, array_map('trim', explode(',', $content)));
-					}
-				}
-			}
-		}
-
-		$media_list = array_merge($media_list, $meta_values);
-		break;
-
+        }
     }
-}
 
     if (empty($media_list)) {
         return '<strong>OPS!</strong> No values were provided for the gallery.';
@@ -148,9 +156,32 @@ foreach ($processing_order as $item) {
     
     // Definir URLs de embed e thumbnail
     if (is_numeric($item)) {
-        // Para imagens, busca pela ID
-        $embed_url = getImageUrlFromId($item);
-        $thumb_url = $embed_url;
+        $attachment_post = get_post($item);
+    
+        if ($attachment_post && $attachment_post->post_type === 'attachment') {
+            // Verifica se é um vídeo externo (YouTube, etc.)
+            if ($attachment_post->post_mime_type === 'oembed/external') {
+                $url = $attachment_post->guid;
+    
+                if (strpos($url, 'youtu') !== false) {
+                    $embed_url = convertYoutubeUrlToEmbed($url);
+                    $thumb_url = getYoutubeThumbnail($url);
+                } else {
+                    // Outro tipo de mídia externa
+                    $embed_url = $url;
+                    $thumb_url = $url;
+                }
+            } else {
+                // É uma imagem comum
+                $embed_url = getImageUrlFromId($item);
+                $thumb_url = $embed_url;
+            }
+        } else {
+            // Não é um attachment válido
+            $embed_url = '';
+            $thumb_url = '';
+        }
+    
     } elseif (strpos($item, 'youtu') !== false) {
         // Caso seja link do YouTube
         $embed_url = convertYoutubeUrlToEmbed($item);
