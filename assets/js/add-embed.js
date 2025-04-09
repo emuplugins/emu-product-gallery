@@ -1,3 +1,42 @@
+// Função global
+function onCustomButtonClick() {
+
+    const OriginalFrame = wp.media.view.MediaFrame.Select;
+
+    const custom_data = wp.media.frame.state().props.get('custom_data');
+    if (!custom_data) {
+        alert('Informe uma URL válida.');
+        return;
+    }
+
+    fetch(custom_embed_data.rest_url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-WP-Nonce': custom_embed_data.nonce
+        },
+        body: JSON.stringify({
+            oembed_url: custom_data
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+    if (data.success) {
+        alert('Embed adicionado com sucesso!');
+
+        document.querySelector("#menu-item-library").click();
+        OriginalFrame = '';
+
+    } else {
+        alert(data.message || 'Erro ao adicionar o embed.');
+    }
+})
+    .catch(error => {
+        console.error('Erro na requisição:', error);
+        alert('Erro ao processar a requisição.');
+    });
+}
+
 jQuery(document).ready(function ($) {
 
     // Define o controller (estado personalizado)
@@ -12,7 +51,7 @@ jQuery(document).ready(function ($) {
         },
 
         customAction: function () {
-            alert('URL informada: ' + this.props.get('custom_data'));
+            onCustomButtonClick();
         }
     });
 
@@ -46,84 +85,58 @@ jQuery(document).ready(function ($) {
             this.controller.state().customAction();
         }
     });
+
     wp.media.view.CustomGlobalContent = wp.media.View.extend({
         className: 'add-embed-wrapper',
-    
+
         events: {
             'input input': 'updateData',
             'change input': 'updateData',
             'click #botao-personalizado': 'onCustomButtonClick'
         },
-    
+
         initialize: function () {
             this.input = $('<input>', {
                 type: 'text',
                 placeholder: 'Digite a URL',
                 style: 'width: 100%; margin-top: 10px;'
             });
-    
+
             this.button = $('<button>', {
                 id: 'botao-personalizado',
                 class: 'button button-secondary',
                 text: 'Enviar URL',
                 style: 'margin-top: 10px; display: block;'
             });
-    
+
             this.$el.append('<h3>Formulário Personalizado</h3>');
             this.$el.append(this.input);
             this.$el.append(this.button);
-    
+
             this.model.on('change:custom_data', this.render, this);
         },
-    
+
         render: function () {
             this.input.val(this.model.get('custom_data'));
             return this;
         },
-    
+
         updateData: function (event) {
             this.model.set('custom_data', event.target.value);
         },
-    
+
         onCustomButtonClick: function () {
-            const valor = this.model.get('custom_data');
-            if (!valor) {
-                alert('Informe uma URL válida.');
-                return;
-            }
-        
-            fetch(custom_embed_data.rest_url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-WP-Nonce': custom_embed_data.nonce
-                },
-                body: JSON.stringify({
-                    oembed_url: valor
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Embed adicionado com sucesso!');
-                    window.location.href = data.redirect_url;
-                } else {
-                    alert(data.message || 'Erro ao adicionar o embed.');
-                }
-            })
-            .catch(error => {
-                console.error('Erro na requisição:', error);
-                alert('Erro ao processar a requisição.');
-            });
-        }        
+            onCustomButtonClick(); // Usa a função global
+        }
     });
-    
 
     // Sobrescreve todos os MediaFrames para adicionar a aba personalizada globalmente
     const OriginalFrame = wp.media.view.MediaFrame.Select;
     wp.media.view.MediaFrame.Select = OriginalFrame.extend({
         initialize: function () {
             OriginalFrame.prototype.initialize.apply(this, arguments);
+
+            wp.media.frame = this; // Torna acessível globalmente
 
             this.states.add([
                 new wp.media.controller.CustomGlobalState({

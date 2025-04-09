@@ -51,25 +51,18 @@ class EPGEmbedInLibrary{
         if ( $hook !== 'media_page_oembedinlibrary' ){
             
             wp_enqueue_script(
-                'oembed_js', $plugin_url . '/assets/js/oembed.js',
+                'addmbed_js', $plugin_url . '/assets/js/add-mbed.js',
                 [ 'jquery' ],
                 '1.1',
                 true
             );
-    
-            // depois de localiza-lo, passa um objeto que é o url do admin ajax, 
-            // isso seria possivel também passando no código o /admin-ajax.php
-            wp_localize_script( 'oembed_js', 'ajax_object', [
-                'ajax_url' => admin_url( 'admin-ajax.php' ),
-            ]);
 
-            wp_localize_script('oembed_js', 'custom_embed_data', [
+            wp_localize_script('addmbed_js', 'custom_embed_data', [
                 'rest_url' => rest_url('epg/v1/add-embed'),
                 'nonce'    => wp_create_nonce('wp_rest')
             ]);
 
         }
-
 
         // enfilerando os estilos, são poucos
         wp_enqueue_style(

@@ -67,7 +67,8 @@ p.add_product_images a:after{
 }
 
 #woocommerce-product-images .inside #product_images_container ul ul.actions li a.delete {
-    font-size:3em!important
+    font-size:3em!important;
+    cursor:pointer;
 }
 
 .product_images .image{
@@ -75,5 +76,19 @@ p.add_product_images a:after{
 }
 
 .product_images .image img{
-    border-radius:5.5px!important
+    border-radius:5.5px!important;
+    cursor:pointer;
+}
+
+div#woocommerce-product-images:after {
+    content: "Lembre-se de não entrar no editor caso tenha desativado o plugin. \A \A Do contrário, os vídeos serão removidos da galeria, restando apenas as imagens.";
+    white-space: pre-line;
+    padding: 10px;
+    display: block;
+    line-height: 1.4em;
+    background: #def;
+    font-weight: 500;
+    font-family: sans-serif;
+    font-size: 0.7rem;
+    color: #212232;
 }

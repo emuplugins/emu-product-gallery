@@ -11,11 +11,10 @@ if (!defined('ABSPATH')) exit;
 define('EPG_DIR', plugin_dir_path(__FILE__));
 
 require_once EPG_DIR . 'includes/classes/oembed.php';
+
 // Load backend files
 if (is_admin()) {
     require_once EPG_DIR . 'update-handler.php';
-    require_once EPG_DIR . 'includes/metaboxes.php';
-    require_once EPG_DIR . 'includes/option_page.php';
 }
 
 if (!is_admin()) {
