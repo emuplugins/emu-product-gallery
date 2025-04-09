@@ -1,7 +1,7 @@
 ;(function($) {
     $(function() {
-        const $previewContainer = $('#oembed_in_library_preview');
-        const $previewButton = $('#oembed_in_library_btn_preview');
+        // const $previewContainer = $('#oembed_in_library_preview');
+        // const $previewButton = $('#oembed_in_library_btn_preview');
         const $urlInput = $('#oembed_url');
 
         if (!$previewButton.length || !$urlInput.length) return;
@@ -15,7 +15,7 @@
                 return;
             }
 
-            $previewContainer.empty().addClass('loading');
+            // $previewContainer.empty().addClass('loading');
 
             $.ajax({
                 type: 'POST',

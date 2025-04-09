@@ -1,6 +1,6 @@
 <?php
 
-if ( ! class_exists('OEmbedInLibrary') ) return;
+if ( ! class_exists('OEmbedInLibrary') ) :
 
 class EPGEmbedInLibrary{
 
@@ -32,30 +32,52 @@ class EPGEmbedInLibrary{
 
     // enfilera os scripts que serão usados
     public function admin_scripts( $hook ) {
+        
+        $plugin_url = plugin_dir_url( EPG_DIR ) . 'emu-product-gallery/';
 
-        if ( $hook !== 'media_page_oembedinlibrary' ) return;
+        $screen = get_current_screen();
+        
+        // caso estejamos na tela de edição de produtos
+        if ( $screen && $screen->base === 'post' ) {
+            wp_enqueue_script(
+                'custom-media-form',
+                $plugin_url . '/assets/js/add-embed.js',
+                ['media-views','jquery'],
+                null,
+                true
+            );
+        }        
 
-        wp_enqueue_script(
-            'oembed_js',
-            plugins_url( '/js/oembed_in_library.js', __FILE__ ),
-            [ 'jquery' ],
-            '1.1',
-            true
-        );
+        // caso estejamos na tela de adicionar midia
+        if ( $hook !== 'media_page_oembedinlibrary' ){
+            
+            wp_enqueue_script(
+                'oembed_js', $plugin_url . '/assets/js/oembed.js',
+                [ 'jquery' ],
+                '1.1',
+                true
+            );
+    
+            // depois de localiza-lo, passa um objeto que é o url do admin ajax, 
+            // isso seria possivel também passando no código o /admin-ajax.php
+            wp_localize_script( 'oembed_js', 'ajax_object', [
+                'ajax_url' => admin_url( 'admin-ajax.php' ),
+            ]);
 
-        // depois de localiza-lo, passa um objeto que é o url do admin ajax, 
-        // isso seria possivel também passando no código o /admin-ajax.php
-        wp_localize_script( 'oembed_js', 'ajax_object', [
-            'ajax_url' => admin_url( 'admin-ajax.php' ),
-        ]);
+            wp_localize_script('oembed_js', 'custom_embed_data', [
+                'rest_url' => rest_url('epg/v1/add-embed'),
+                'nonce'    => wp_create_nonce('wp_rest')
+            ]);
+
+        }
+
 
         // enfilerando os estilos, são poucos
         wp_enqueue_style(
-            'oembed_css',
-            plugins_url( '/css/oembed_in_library.css', __FILE__ ),
+            'oembed_css', $plugin_url . 'assets/css/oembed.css',
             [],
             '1.1'
-        );
+        ); 
         
     }
 
@@ -143,7 +165,7 @@ class EPGEmbedInLibrary{
         $url = esc_url_raw( $_POST['oembed_url'] );
 
         if ( ! $url ) wp_die( __('No URL provided.', 'oembed-in-library') );
-        
+
         // recupera o iframe html
         $html = $this->get_preview( $url );
         
@@ -174,7 +196,7 @@ class EPGEmbedInLibrary{
 
     // isso é necessário por algum motivo 🙂
     public function add_icons_dir( $dirs ) {
-        $dirs[ plugin_dir_path( __FILE__ ) ] = untrailingslashit( plugin_dir_url( __FILE__ ) );
+        $dirs[ EPG_DIR ] = untrailingslashit( EPG_DIR );
         return $dirs;
     }
 
@@ -190,6 +212,8 @@ class EPGEmbedInLibrary{
     }
 
 };
+
+endif;
 
 // ativando!
 EPGEmbedInLibrary::getInstance();
@@ -246,3 +270,65 @@ add_filter( 'wp_get_attachment_image_src', function( $image, $attachment_id, $si
     return $image;
 
 }, 10, 3 );
+
+
+
+add_action('rest_api_init', function () {
+    register_rest_route('epg/v1', '/add-embed', [
+        'methods'  => 'POST',
+        'callback' => 'custom_add_embed_to_library',
+        'permission_callback' => function () {
+            return current_user_can('upload_files');
+        }
+    ]);
+});
+
+function custom_add_embed_to_library(WP_REST_Request $request) {
+
+    function get_preview( $url ) {
+        $oembed = _wp_oembed_get_object();
+        return $oembed->get_html( $url, [
+            'width' => 400,
+            'height' => 300
+        ]);
+    }
+
+    function get_embed_data( $url ) {
+        $oembed = _wp_oembed_get_object();
+        return $oembed->get_data( $url );
+    }
+
+    $url = esc_url_raw($request->get_param('oembed_url'));
+
+    if (!$url) {
+        return new WP_Error('no_url', __('No URL provided.', 'oembed-in-library'), ['status' => 400]);
+    }
+
+    $html = get_preview($url);
+    $data = get_embed_data($url);
+
+    $post_id = wp_insert_post([
+        'post_title'     => isset($data->title) ? sanitize_text_field($data->title) : $url,
+        'post_content'   => $html,
+        'post_status'    => 'inherit',
+        'post_author'    => get_current_user_id(),
+        'post_type'      => 'attachment',
+        'guid'           => $url,
+        'post_mime_type' => 'oembed/external'
+    ]);
+
+    if (is_wp_error($post_id)) {
+        return new WP_Error('insert_failed', __('Failed to insert embed.', 'oembed-in-library'), ['status' => 500]);
+    }
+
+    if (isset($data->thumbnail_url)) {
+        update_post_meta($post_id, '_oembed_thumbnail_url', esc_url_raw($data->thumbnail_url));
+    }
+
+    return [
+        'success' => true,
+        'post_id' => $post_id,
+        'message' => __('Embed added to library.', 'oembed-in-library'),
+        'redirect_url' => admin_url('upload.php?mode=grid')
+    ];
+}

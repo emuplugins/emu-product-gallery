@@ -8,11 +8,14 @@ Author: Emu Plugins
 
 if (!defined('ABSPATH')) exit;
 
+define('EPG_DIR', plugin_dir_path(__FILE__));
+
+require_once EPG_DIR . 'includes/classes/oembed.php';
 // Load backend files
 if (is_admin()) {
-    require_once plugin_dir_path(__FILE__) . 'update-handler.php';
-    require_once plugin_dir_path(__FILE__) . 'includes/metaboxes.php';
-    require_once plugin_dir_path(__FILE__) . 'includes/option_page.php';
+    require_once EPG_DIR . 'update-handler.php';
+    require_once EPG_DIR . 'includes/metaboxes.php';
+    require_once EPG_DIR . 'includes/option_page.php';
 }
 
 if (!is_admin()) {
@@ -37,8 +40,8 @@ add_action('wp_enqueue_scripts', 'emu_product_gallery_enqueue_assets');
 // Including the slider shortcode
 function emu_product_gallery_include_slider_shortcode() {
     // Includes the file containing the shortcode
-    if (file_exists(plugin_dir_path(__FILE__) . 'includes/slider_template.php')) {
-        require_once plugin_dir_path(__FILE__) . 'includes/slider_template.php';
+    if (file_exists(EPG_DIR . 'includes/slider_template.php')) {
+        require_once EPG_DIR . 'includes/slider_template.php';
     }
 }
 
