@@ -27,7 +27,6 @@ class EPGEmbedInLibrary{
 
         // adicionando o option page e a página pra enviar o embed pro wp
         add_action( 'admin_menu', [ $this, 'admin_menu' ] );
-        add_action( 'edit_form_after_title', [ $this, 'edit_form_after_title' ] );
     }
 
     // enfilera os scripts que serão usados
@@ -161,6 +160,9 @@ class EPGEmbedInLibrary{
     // Função para adicionar o embed como attatchment
     public function add_in_library() {
 
+        
+        
+
         // guarda da submissão do formulário o url
         $url = esc_url_raw( $_POST['oembed_url'] );
 
@@ -171,22 +173,15 @@ class EPGEmbedInLibrary{
         
         // recupera os dados separados
         $data = $this->get_embed_data( $url );
-    
-        // Cria o attachment com o HTML
-        $post_id = wp_insert_post( [
-            'post_title' => isset( $data->title ) ? sanitize_text_field( $data->title ) : $url,
-            'post_content'   => $html,
-            'post_status'    => 'inherit',
-            'post_author'    => get_current_user_id(),
-            'post_type'      => 'attachment',
-            'guid'           => $url,
-            'post_mime_type' => 'oembed/external'
-        ] );
-        
-        // salva em um postmeta personalizado o link da thumbnail, pra conseguirmos exibir depois na lista de imagens
-        if ( isset( $data->thumbnail_url ) ) {
-            update_post_meta( $post_id, '_oembed_thumbnail_url', esc_url_raw( $data->thumbnail_url ) );
-        }
+
+        $descricao = sanitize_text_field( 'Para que este vídeo funcione, o plugin Emu Product Gallery deve estar instalado!' );
+
+        $request = new WP_REST_Request('POST', '/epg/v1/add-embed');
+        $request->set_param('oembed_url', $url);
+        $request->set_param('description', $descricao);
+
+        // Executa diretamente o callback
+        $response = rest_do_request($request);
         
         // redireciona pra lista de mídias do wordpress, no modo grid
         wp_redirect( admin_url('upload.php?mode=grid') );
@@ -199,18 +194,6 @@ class EPGEmbedInLibrary{
         $dirs[ EPG_DIR ] = untrailingslashit( EPG_DIR );
         return $dirs;
     }
-
-    // mostra na página do post o iframe, pra que a pessoa possa ver o video do youtube ali
-    public function edit_form_after_title( $post ) {
-
-        if ( $post->post_type !== 'attachment' ) return;
-
-        if ( stripos( $post->post_mime_type, 'oembed/' ) !== 0 ) return;
-
-        echo $this->get_preview( esc_url( $post->guid ) );
-
-    }
-
 };
 
 endif;
@@ -307,15 +290,18 @@ function custom_add_embed_to_library(WP_REST_Request $request) {
     $html = get_preview($url);
     $data = get_embed_data($url);
 
-    $post_id = wp_insert_post([
-        'post_title'     => isset($data->title) ? sanitize_text_field($data->title) : $url,
-        'post_content'   => $html,
+    $descricao = sanitize_text_field( 'Para que este vídeo funcione, o plugin Emu Product Gallery deve estar instalado!' );
+    
+    // Cria o attachment com o HTML
+    $post_id = wp_insert_post( [
+        'post_title' => isset( $data->title ) ? sanitize_text_field( $data->title ) : $url,
+        'post_content'   => $descricao,
         'post_status'    => 'inherit',
         'post_author'    => get_current_user_id(),
         'post_type'      => 'attachment',
         'guid'           => $url,
         'post_mime_type' => 'oembed/external'
-    ]);
+    ] );
 
     if (is_wp_error($post_id)) {
         return new WP_Error('insert_failed', __('Failed to insert embed.', 'oembed-in-library'), ['status' => 500]);
@@ -329,6 +315,6 @@ function custom_add_embed_to_library(WP_REST_Request $request) {
         'success' => true,
         'post_id' => $post_id,
         'message' => __('Embed added to library.', 'oembed-in-library'),
-        'redirect_url' => admin_url('upload.php?mode=grid')
+        // 'redirect_url' => admin_url('upload.php?mode=grid')
     ];
 }

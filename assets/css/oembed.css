@@ -13,7 +13,7 @@
     position: relative;
 }
 
-.image:has(img[src*="default.jpg"])::after {
+.image:has(img[src*="default.jpg"])::after, .js--select-attachment.type-oembed .thumbnail::after  {
     content: "\25B6";
     position: absolute;
     top: 50%;
@@ -54,15 +54,26 @@ p.add_product_images a{
     color:white;
     text-decoration: none;
     border-radius: 2.5px!important;
-    min-height: 24px;
     cursor: pointer!important;
 }
 
 p.add_product_images a:after{
-    padding:7px 14px;
+    padding:7px;
     content: 'Adicionar item';
     font-size:14px!important;
     text-align: center;
     display: block;
     cursor: pointer!important;
+}
+
+#woocommerce-product-images .inside #product_images_container ul ul.actions li a.delete {
+    font-size:3em!important
+}
+
+.product_images .image{
+    border:none!important;
+}
+
+.product_images .image img{
+    border-radius:5.5px!important
 }
