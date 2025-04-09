@@ -1,0 +1,248 @@
+<?php
+
+if ( ! class_exists('OEmbedInLibrary') ) return;
+
+class EPGEmbedInLibrary{
+
+    // definindo a variável da instancia
+    private static $_instance;
+
+    // função para verificar se a instancia já existe, pra evitar duplicações da classe
+    public static function getInstance() {
+
+        // se já existir, ele retorna a si mesmo
+        if ( self::$_instance instanceof self ) return self::$_instance;
+        
+        // se não, cria uma nova instância de si mesmo
+        self::$_instance = new self();
+        
+        // e retorna a instância por fim
+        return self::$_instance;
+    }
+
+    private function __construct() {
+        
+        // adicionando os scripts necessários 
+        add_action( 'admin_enqueue_scripts', [ $this, 'admin_scripts' ] );
+
+        // adicionando o option page e a página pra enviar o embed pro wp
+        add_action( 'admin_menu', [ $this, 'admin_menu' ] );
+        add_action( 'edit_form_after_title', [ $this, 'edit_form_after_title' ] );
+    }
+
+    // enfilera os scripts que serão usados
+    public function admin_scripts( $hook ) {
+
+        if ( $hook !== 'media_page_oembedinlibrary' ) return;
+
+        wp_enqueue_script(
+            'oembed_js',
+            plugins_url( '/js/oembed_in_library.js', __FILE__ ),
+            [ 'jquery' ],
+            '1.1',
+            true
+        );
+
+        // depois de localiza-lo, passa um objeto que é o url do admin ajax, 
+        // isso seria possivel também passando no código o /admin-ajax.php
+        wp_localize_script( 'oembed_js', 'ajax_object', [
+            'ajax_url' => admin_url( 'admin-ajax.php' ),
+        ]);
+
+        // enfilerando os estilos, são poucos
+        wp_enqueue_style(
+            'oembed_css',
+            plugins_url( '/css/oembed_in_library.css', __FILE__ ),
+            [],
+            '1.1'
+        );
+        
+    }
+
+    // retorna o html com o embed
+    public function ajax_preview() {
+
+        // verifica o nonce
+        check_ajax_referer( 'ajax_preview_nonce', 'security' );
+
+        if ( ! current_user_can( 'upload_files' ) ) wp_die();
+
+        try {
+            echo $this->get_preview( sanitize_text_field( $_POST['media_url'] ) );
+        } catch ( Exception $e ) {
+            echo esc_html( $e->getMessage() );
+        }
+
+        wp_die();
+    }
+
+    private function get_preview( $url ) {
+
+        $oembed = _wp_oembed_get_object();
+
+        return $oembed->get_html( $url, [
+            'width' => 400,
+            'height' => 300
+        ]);
+
+    }
+
+    private function get_embed_data( $url ) {
+
+        $oembed = _wp_oembed_get_object();
+
+        return $oembed->get_data( $url );
+
+    }
+
+    // adiciona no menu a página de opções, para enviar os embeds para o site
+    public function admin_menu() {
+
+        add_submenu_page(
+            'upload.php',
+            __( 'Embed in Library', 'oembed-in-library' ),
+            __( 'oEmbed', 'oembed-in-library' ),
+            'upload_files',
+            'oembedinlibrary',
+            [ $this, 'page_embed' ]
+        );
+
+        add_action( 'admin_action_oembed_add_in_library', [ $this, 'add_in_library' ] );
+
+        add_filter( 'icon_dirs', [ $this, 'add_icons_dir' ] );
+
+    }
+
+    // retorna o html da página para adicionar os embeds no site
+    public function page_embed() {
+    ?>
+
+    <div class="wrap">
+
+        <h2><?php _e('Embed in Library', 'oembed-in-library'); ?></h2>
+        <p><?php _e('Use this form to add an external media in your library.', 'oembed-in-library'); ?></p>
+
+        <form action="<?php echo esc_url( admin_url('admin.php') ); ?>" method="post">
+
+            <label for="oembed_url"><?php _e('URL', 'oembed-in-library') ?></label>
+            <input type="text" name="oembed_url" id="oembed_url"/>
+            <input type="hidden" name="action" value="oembed_add_in_library" />                
+            <input type="submit" value="<?php _e('Add in library', 'oembed-in-library') ?>" class="button button-primary"/>
+
+        </form>
+
+    </div>
+
+    <?php   
+    }
+
+    // Função para adicionar o embed como attatchment
+    public function add_in_library() {
+
+        // guarda da submissão do formulário o url
+        $url = esc_url_raw( $_POST['oembed_url'] );
+
+        if ( ! $url ) wp_die( __('No URL provided.', 'oembed-in-library') );
+        
+        // recupera o iframe html
+        $html = $this->get_preview( $url );
+        
+        // recupera os dados separados
+        $data = $this->get_embed_data( $url );
+    
+        // Cria o attachment com o HTML
+        $post_id = wp_insert_post( [
+            'post_title' => isset( $data->title ) ? sanitize_text_field( $data->title ) : $url,
+            'post_content'   => $html,
+            'post_status'    => 'inherit',
+            'post_author'    => get_current_user_id(),
+            'post_type'      => 'attachment',
+            'guid'           => $url,
+            'post_mime_type' => 'oembed/external'
+        ] );
+        
+        // salva em um postmeta personalizado o link da thumbnail, pra conseguirmos exibir depois na lista de imagens
+        if ( isset( $data->thumbnail_url ) ) {
+            update_post_meta( $post_id, '_oembed_thumbnail_url', esc_url_raw( $data->thumbnail_url ) );
+        }
+        
+        // redireciona pra lista de mídias do wordpress, no modo grid
+        wp_redirect( admin_url('upload.php?mode=grid') );
+
+        exit;
+    }
+
+    // isso é necessário por algum motivo 🙂
+    public function add_icons_dir( $dirs ) {
+        $dirs[ plugin_dir_path( __FILE__ ) ] = untrailingslashit( plugin_dir_url( __FILE__ ) );
+        return $dirs;
+    }
+
+    // mostra na página do post o iframe, pra que a pessoa possa ver o video do youtube ali
+    public function edit_form_after_title( $post ) {
+
+        if ( $post->post_type !== 'attachment' ) return;
+
+        if ( stripos( $post->post_mime_type, 'oembed/' ) !== 0 ) return;
+
+        echo $this->get_preview( esc_url( $post->guid ) );
+
+    }
+
+};
+
+// ativando!
+EPGEmbedInLibrary::getInstance();
+
+// Por padrão, as thumbnails não são mostradas na lista de mídias... 
+// Por isso precisamos interceptar no momento certo a exibição delas pra que tudo ocorra como esperado.
+// Claro que faremos isso em um filtro, pra previnir que o código seja executado muitas vezes
+
+// Galeria em modo Grid
+add_filter( 'wp_prepare_attachment_for_js', function( $response, $attachment ) {
+
+    // Existem muitos arquivos de mídia, e por isso só deve ser
+    // alterado o url do thumbnail se o attatchment for um embed
+	if ( $attachment->post_mime_type === 'oembed/external' ) {
+
+		$thumbnail_url = get_post_meta( $attachment->ID, '_oembed_thumbnail_url', true );
+
+		if ( $thumbnail_url ) {
+			$response['sizes'] = [
+				'full' => [
+					'url'    => esc_url( $thumbnail_url ),
+					'width'  => 600,
+					'height' => 400,
+					'orientation' => 'landscape',
+				],
+			];
+
+			$response['icon'] = esc_url( $thumbnail_url );
+			$response['image'] = esc_url( $thumbnail_url ); // <- necessário
+		}
+	}
+
+	return $response;
+
+}, 10, 2 );
+
+// Galeria em modo Lista
+add_filter( 'wp_get_attachment_image_src', function( $image, $attachment_id, $size ) {
+
+    $post = get_post( $attachment_id );
+
+    if ( $post && $post->post_mime_type === 'oembed/external' ) {
+        $thumb = get_post_meta( $attachment_id, '_oembed_thumbnail_url', true );
+        if ( $thumb ) {
+            return [
+                esc_url( $thumb ), // url da thumb externa
+                600,               // largura
+                400,               // altura
+                false              // is_intermediate
+            ];
+        }
+    }
+
+    return $image;
+
+}, 10, 3 );

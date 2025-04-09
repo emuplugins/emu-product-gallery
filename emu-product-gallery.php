@@ -1,11 +1,9 @@
 <?php
 /*
 Plugin Name: Emu Product Gallery
-Plugin URI: https://example.com/emu-product-gallery
 Description: A plugin to display image and YouTube video gallery sliders.
 Version: 1.1.9
 Author: Emu Plugins
-Author URI: https://aganrdagency.com
 */
 
 if (!defined('ABSPATH')) exit;
@@ -45,4 +43,3 @@ function emu_product_gallery_include_slider_shortcode() {
 }
 
 add_action('init', 'emu_product_gallery_include_slider_shortcode');
-
