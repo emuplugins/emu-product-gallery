@@ -29,7 +29,10 @@ class emuProductGallery
         if($post_type === 'product'){
 
             $product = wc_get_product($post_id);
-            $gallery_ids = $product->get_gallery_image_ids();
+
+            if($product){
+                $gallery_ids = $product->get_gallery_image_ids();
+            }
 
         }
 
@@ -67,7 +70,7 @@ class emuProductGallery
         
             // Define manualmente a thumbnail
             $thumb_url = "https://img.youtube.com/vi/{$video_id}/maxresdefault.jpg";
-            
+
             if ($video_id) {
                 $html = '<lite-youtube videoid="' . esc_attr($video_id) . '" poster="' . esc_url($thumb_url) . '" style="background:black;display:block;height:100%;" params="autoplay=1&rel=0"></lite-youtube>';
             } else {
@@ -119,12 +122,11 @@ function emu_product_gallery_shortcode($atts) {
 
     $gallery_ids = $emuProductGallery->getFieldsValues(); // retorna um array de IDs
 
+    if( ! is_array($gallery_ids)){
+        return 'Nenhuma mídia.';
+    }
+
     ob_start(); ?>
-
-<!-- <script type="module" src="https://cdn.jsdelivr.net/npm/lite-youtube-embed@0.2.0/src/lite-yt-embed.js"></script> -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lite-youtube-embed@0.2.0/src/lite-yt-embed.css" />
-
-
 
     <div class="emu-splide-wrapper" style="display: flex; gap: 20px;">
         
