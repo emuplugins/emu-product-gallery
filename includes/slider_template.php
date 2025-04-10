@@ -158,13 +158,30 @@ function emu_product_gallery_shortcode($atts) {
         return 'Nenhuma mídia.';
     }
 
+    $direction = isset($atts['direction']) ? $atts['direction'] : 'ltr';
+
+    $fdRow = '';
+    $fdColumn = '';
+    $thumbsHeight = '';
+    $mainSliderWidth = '';
+
+    if($direction && $direction != 'ttb'){
+        $fdRow = 'flex-direction: row';
+        $fdColumn = 'flex-direction: column';
+    }
+    if($direction && $direction == 'ltr'){
+        $fdRow = 'flex-direction: row';
+        $fdColumn = 'flex-direction: column';
+        $thumbsHeight = 'min-width: auto; min-height:auto';
+        $mainSliderWidth = 'min-width: 100%;';
+    }
 
     ob_start(); ?>
-    <div class="emu-splide-wrapper" style="display: flex; gap: 20px;">
+    <div class="emu-splide-wrapper" style="display: flex; gap: 20px; <?= $fdColumn ?>;">
 
-        <div class="splide" id="emu-splide-thumbs" data-splide='{"direction": "ttb", "height": "auto", "fixedWidth": 100, "fixedHeight": 100, "isNavigation": true, "pagination": false, "arrows": false, "focus": 0}'>
+        <div class="splide" id="emu-splide-thumbs" data-splide='{"direction": "<?= $direction ?>", "height": "auto", "fixedWidth": "auto", "fixedHeight": "auto", "isNavigation": true, "pagination": false, "arrows": false, "focus": 0}' style="<?= $thumbsHeight ?>">
             <div class="splide__track">
-                <ul class="splide__list">
+                <ul class="splide__list" style="<?= $fdRow ?>;<?= $thumbsHeight ?>">
                     <?php foreach($gallery_ids as $item):
                         $type = $emuProductGallery->getElementType($item);
                         echo '<li class="splide__slide">'.$emuProductGallery->thumbSliderElement($item, $type).'</li>';
@@ -173,7 +190,7 @@ function emu_product_gallery_shortcode($atts) {
             </div>
         </div>
 
-        <div class="splide" id="emu-splide" data-splide='{"pagination": false, "height": "auto", "cover": true, "rewind": true}'>
+        <div class="splide" id="emu-splide" data-splide='{"pagination": false, "height": "auto", "cover": true, "rewind": true}' style="<?= $mainSliderWidth ?>">
             <div class="splide__track">
                 <ul class="splide__list">
                     <?php foreach($gallery_ids as $item):

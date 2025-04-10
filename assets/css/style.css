@@ -1,6 +1,6 @@
 
 .emu-splide-wrapper{
-    width:fit-content
+    width:100%
 }
 
 .emu-splide-wrapper :is(button), .emu-splide-wrapper :is(button):hover, .emu-splide-wrapper :is(button):focus{
@@ -12,29 +12,31 @@
 }
 
 :root{
-    --slider-height:400px
+    --slider-height:300px
 }
 
 .splide__track--nav>.splide__list>.splide__slide{
     border: none!important;
+    width:fit-content!important
 }
 
 #emu-splide-thumbs-list{
     gap:10px;
     display: flex;
     flex-direction: column;
+    width: fit-content;
 }
 
 #emu-splide-thumbs {
-    width: 100px;
+    width: fit-content;
     min-height:var(--slider-height);
     max-height:var(--slider-height);
-    flex-grow:1
+    flex-grow:0
 }
 
 #emu-splide-thumbs .splide__slide img {
-    width: 100%;
-    height: 100%;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
     transition: all.2s;
     opacity:0.4
@@ -45,7 +47,8 @@
 }
 
 #emu-splide {
-    width: 600px;
+    width: 100px;
+    flex-grow:1;
     min-height:var(--slider-height);
     max-height:var(--slider-height);
 }
