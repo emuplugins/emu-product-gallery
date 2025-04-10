@@ -7,43 +7,67 @@ if (!defined('ABSPATH')) {
 class emuProductGallery
 {
     private $post_id = null;
-    private $fields = [];
     private $oembed = null;
+    private $options = [];
 
-    public function __construct($post_id, $post_type = '', $fields = []) {
+    public function __construct($post_id, $options = []) {
         $this->post_id = $post_id;
-        $this->fields = $fields;
+        $this->options = $options;
         $this->oembed = _wp_oembed_get_object();
-
     }
 
     public function getFieldsValues() {
+        
         $post_id = $this->post_id;
         $gallery_ids = [];
-    
-        $product = wc_get_product($post_id);
-        if ($product) {
-            $gallery_ids = $product->get_gallery_image_ids();
-        }
-    
-        if (!empty($this->fields) && is_array($this->fields)) {
-            foreach ($this->fields as $field_key) {
-                $raw_value = get_post_meta($post_id, $field_key, true);
-                if ($raw_value) {
-                    $ids = is_array($raw_value) ? $raw_value : explode(',', $raw_value);
-                    foreach ($ids as $id) {
-                        $id = trim($id);
-                        if (is_numeric($id)) {
-                            $gallery_ids[] = (int) $id;
+        
+        foreach ($this->options as $key => $value) {
+
+            if($value === 'thumbnail'){
+
+                if ($value) {
+                    $thumbnail_id = get_post_thumbnail_id($post_id);
+                    if ($thumbnail_id) {
+                        $gallery_ids[] = $thumbnail_id;
+                    }
+                }
+
+            }
+
+            if($value === 'woocommerce'){
+
+                if ($value) {
+                    $product = wc_get_product($post_id);
+                    if ($product) {
+                        $gallery_ids = array_merge($gallery_ids, $product->get_gallery_image_ids());
+                    }
+                }
+
+            }
+            
+            if($key === 'fields'){
+
+                if (is_array($value)) {
+                    foreach ($value as $field_key) {
+                        $raw_value = get_post_meta($post_id, $field_key, true);
+                        if ($raw_value) {
+                            $ids = is_array($raw_value) ? $raw_value : explode(',', $raw_value);
+                            foreach ($ids as $id) {
+                                $id = trim($id);
+                                if (is_numeric($id)) {
+                                    $gallery_ids[] = (int) $id;
+                                }
+                            }
                         }
                     }
                 }
+
             }
+           
         }
     
-        return array_unique($gallery_ids);
-    }
-    
+        return $gallery_ids;
+    }    
     
 
     public function getElementType($id) {
@@ -121,15 +145,10 @@ class emuProductGallery
 
 
 function emu_product_gallery_shortcode($atts) {
-
-    $atts = shortcode_atts([
-        'post_id' => '',
-        'fields'    => '', // campos personalizados separados por vírgula
-    ], $atts, 'emu_product_gallery');
-
+ 
     $post_id = get_the_ID();
 
-    $emuProductGallery = new emuProductGallery($post_id, $atts['post_id'], $atts['fields']);
+    $emuProductGallery = new emuProductGallery($post_id, $atts);
 
     $gallery_ids = $emuProductGallery->getFieldsValues();
 
@@ -137,54 +156,34 @@ function emu_product_gallery_shortcode($atts) {
         return 'Nenhuma mídia.';
     }
 
-    ob_start(); ?>
 
+    ob_start(); ?>
     <div class="emu-splide-wrapper" style="display: flex; gap: 20px;">
-        
-        <!-- Thumbnails -->
         <div class="splide" id="emu-splide-thumbs">
             <div class="splide__track">
                 <ul class="splide__list">
-                    <?php 
-                    
-                    // Aqui vamos buscar o tipo do elemento, e depois buscar o elemento em si
-
-                    foreach($gallery_ids as $item){
-
+                    <?php foreach($gallery_ids as $item):
                         $type = $emuProductGallery->getElementType($item);
-
                         echo '<li class="splide__slide">'.$emuProductGallery->thumbSliderElement($item, $type).'</li>';
-                    }
-                    
-                    ?>
+                    endforeach; ?>
                 </ul>
             </div>
         </div>
 
-        <!-- Principal -->
         <div class="splide" id="emu-splide">
             <div class="splide__track">
                 <ul class="splide__list">
-                    <?php 
-                    
-                    // Aqui vamos buscar o tipo do elemento, e depois buscar o elemento em si
-
-                    foreach($gallery_ids as $item){
-
+                    <?php foreach($gallery_ids as $item):
                         $type = $emuProductGallery->getElementType($item);
-
                         echo '<li class="splide__slide">'.$emuProductGallery->mainSliderElement($item, $type).'</li>';
-                    }
-                    
-                    ?>
+                    endforeach; ?>
                 </ul>
             </div>
         </div>
-
     </div>
 
     <?php
-    return ob_get_clean(); // <- importante
+    return ob_get_clean();
 }
 
 add_shortcode('emu_product_gallery', 'emu_product_gallery_shortcode');
