@@ -1,45 +1,22 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const mainEl = document.querySelector('#emu-splide');
+    const thumbsEl = document.querySelector('#emu-splide-thumbs');
 
-    let mainSplideInstance = document.querySelector('#emu-splide');
-    let thumbsSplideInstance = document.querySelector('#emu-splide-thumbs');
+    if (mainEl && thumbsEl) {
+        const main = new Splide(mainEl);
+        const thumbs = new Splide(thumbsEl);
 
-    if (mainSplideInstance && thumbsSplideInstance) {
-
-        var main = new Splide('#emu-splide', {
-            pagination: false,
-            height: 'auto',
-            cover: true,
-            rewind: true,
-        });
-
-        var thumbs = new Splide('#emu-splide-thumbs', {
-            direction: 'ttb',
-            height: 'auto',
-            fixedWidth: 100,
-            fixedHeight: 100,
-            isNavigation: true,
-            pagination: false,
-            arrows: false,
-            focus: 0,
-        });
-
-        // Monta thumbs primeiro
         thumbs.mount();
-
-        // Sincroniza depois
         main.sync(thumbs);
 
-        // Evento para atualizar as classes de destaque
         main.on('move', function (newIndex) {
             document.querySelectorAll('#emu-splide-thumbs .splide__slide').forEach((el, idx) => {
                 el.classList.toggle('is-active', idx === newIndex);
             });
         });
 
-        // Monta o principal por último
         main.mount();
     }
-
 });
 
 
@@ -229,7 +206,7 @@ class LiteYTEmbed extends HTMLElement {
          */
         
         let poster =  this.getAttribute('poster');
-        
+
         // Warm the connection for the poster image
         LiteYTEmbed.addPrefetch('preload', poster, 'image');
 

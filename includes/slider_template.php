@@ -3,7 +3,6 @@
 if (!defined('ABSPATH')) {
     exit;
 }
-
 class emuProductGallery
 {
     private $post_id = null;
@@ -17,7 +16,7 @@ class emuProductGallery
     }
 
     public function getFieldsValues() {
-        
+
         $post_id = $this->post_id;
         $gallery_ids = [];
         
@@ -143,10 +142,13 @@ class emuProductGallery
 
 }
 
-
 function emu_product_gallery_shortcode($atts) {
  
     $post_id = get_the_ID();
+
+    if (!$post_id) {
+        $post_id = get_queried_object_id();
+    }
 
     $emuProductGallery = new emuProductGallery($post_id, $atts);
 
@@ -159,7 +161,8 @@ function emu_product_gallery_shortcode($atts) {
 
     ob_start(); ?>
     <div class="emu-splide-wrapper" style="display: flex; gap: 20px;">
-        <div class="splide" id="emu-splide-thumbs">
+
+        <div class="splide" id="emu-splide-thumbs" data-splide='{"direction": "ttb", "height": "auto", "fixedWidth": 100, "fixedHeight": 100, "isNavigation": true, "pagination": false, "arrows": false, "focus": 0}'>
             <div class="splide__track">
                 <ul class="splide__list">
                     <?php foreach($gallery_ids as $item):
@@ -170,7 +173,7 @@ function emu_product_gallery_shortcode($atts) {
             </div>
         </div>
 
-        <div class="splide" id="emu-splide">
+        <div class="splide" id="emu-splide" data-splide='{"pagination": false, "height": "auto", "cover": true, "rewind": true}'>
             <div class="splide__track">
                 <ul class="splide__list">
                     <?php foreach($gallery_ids as $item):
