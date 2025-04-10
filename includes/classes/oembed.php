@@ -153,9 +153,6 @@ class EPGEmbedInLibrary{
     // Função para adicionar o embed como attatchment
     public function add_in_library() {
 
-        
-        
-
         // guarda da submissão do formulário o url
         $url = esc_url_raw( $_POST['oembed_url'] );
 

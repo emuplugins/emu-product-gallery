@@ -1,181 +1,103 @@
-/* Main Slider Styles */
-.emu-main-slider {
-    width: 100%;
-    max-width: 100%;
-    aspect-ratio: 1;
-    margin: 0 auto;
-	position:relative
+
+.emu-splide-wrapper{
+    width:fit-content
 }
 
-.emu-main-slider video, .emu-main-slider img, .emu-main-slider iframe {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 0px;
-    aspect-ratio: 1 !important;
+.emu-splide-wrapper :is(button), .emu-splide-wrapper :is(button):hover, .emu-splide-wrapper :is(button):focus{
+
+    padding:0;
+    background-color:transparent;
+    border:none;
+
 }
 
-.emu-product-gallery-wrapper .swiper-slide {
-  aspect-ratio:1!important;
-	transition:transform 0.5s!important
-}
-.emu-product-gallery-wrapper .emu-main-slider .swiper-wrapper {
-    box-sizing: content-box;
-    display: grid;
-    grid-auto-flow: column;
-    height: 100%;
-    max-height: inherit;
-    min-height: inherit;
-    position: relative;
-    transition-property: transform;
-    width: 100%;
-    z-index: 1;
-    grid-template-columns: repeat(40, 1fr)!important;
-    width: 1010%!important;
-}
-/* Thumbnail Slider */
-.emu-thumb-slider {
-    margin-top: 15px;
-    max-width: 100%;
-    height: fit-content;
-    margin: 10px auto;
+:root{
+    --slider-height:400px
 }
 
-.emu-thumb-slider .swiper-wrapper {
-    display: grid;
-    gap: 0.15%;
-    grid-template-columns: repeat(40, calc(2.5% - 0.139%)); /* Adjusts to 40 proportional columns */
-    width: 1010%;
+.splide__track--nav>.splide__list>.splide__slide{
+    border: none!important;
 }
 
-.emu-thumb-slider .swiper-slide {
-    width: 100% !important; /* Ensures images or items occupy the column space */
-    aspect-ratio: 1; /* Maintains thumbnail ratio */
-    cursor: pointer;
-    transition: border 0.3s ease-in-out;
-    opacity: 0.4;
-    box-sizing: border-box; /* Ensures padding does not affect size */
-    cursor: pointer;
-}
-
-.emu-thumb-slider .swiper-slide-thumb-active {
-    opacity: 1;
-}
-
-.emu-thumb-slider img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 0px;
-    aspect-ratio: 1 !important;
-    cursor: pointer !important;
-    pointer-events: none;
-    background-color:white;
-}
-
-/* Navigation Arrow Styling */
-.emu-main-slider .swiper-button-next, .emu-main-slider .swiper-button-prev {
-    color: white;
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 0%;
-    cursor: pointer;
-    aspect-ratio: 1/1;
-    width: 70px;
-    height: auto;
-	top:50%!important
-}
-
-.emu-swiper-button-next:hover, .emu-swiper-button-prev:hover {
-    background: rgba(0, 0, 0, 0.8);
-}
-
-.emu-product-gallery-wrapper.loading {
-opacity:0
-}
-
-.emu-product-gallery-wrapper {
-transition:opacity 0.2s
-}
-
-.elementor-editor-active .emu-product-gallery-wrapper .swiper-wrapper {
-    display: none!important
-}
-.elementor-editor-active .emu-main-slider:AFTER{
-    content: 'Devido a incompatibilidades com o editor, esse slide não funciona por aqui! Abra a página no site ao vivo, fora do elementor.';
-    font-family: Sans-Serif;
-    font-weight: 400;
-    color:black;
-    padding:15px;
-    text-align: center;
+#emu-splide-thumbs-list{
+    gap:10px;
     display: flex;
-    width:70%;
-    margin:auto;
+    flex-direction: column;
+}
+
+#emu-splide-thumbs {
+    width: 100px;
+    min-height:var(--slider-height);
+    max-height:var(--slider-height);
+    flex-grow:1
+}
+
+#emu-splide-thumbs .splide__slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all.2s;
+    opacity:0.4
+}
+
+#emu-splide-thumbs .is-active img {
+    opacity:1
+}
+
+#emu-splide {
+    width: 600px;
+    min-height:var(--slider-height);
+    max-height:var(--slider-height);
+}
+
+#emu-splide img{
+    min-height:var(--slider-height);
+    max-height:var(--slider-height);
+}
+
+#emu-splide-thumbs .splide__list{
+    min-height:var(--slider-height);
+    max-height:var(--slider-height);
+}
+#emu-splide .splide__slide{
+    min-height:var(--slider-height);
+    max-height:var(--slider-height);
 }
 
 
-/* Rounded slider */
-
-.emu-main-slider{
-    border-radius:15px;
-    overflow: hidden
-}
-.emu-thumb-slider .swiper-slide {
-    border-radius:15px;
-    overflow: hidden;
+.image {
+    position: relative;
+    display: flex;
+    height: 100%;
+    width: 100%;
 }
 
-.emu-main-slider .swiper-button-next, .emu-main-slider .swiper-button-prev {
-    border-radius:15px;
-    bottom:20px!important;
-    top:unset!important;
-    width:60px!important;
-    height: 60px!important;
-    aspect-ratio: 1!important;
-    padding:10px;
-}
-
-.emu-main-slider .swiper-button-next:after, .emu-main-slider .swiper-button-prev:after {
-    
-    font-size:1.7em!important;
-}
-
-/* Rounded slider */
-
-/* transitions */
-.emu-thumb-slider .swiper-slide {
-    filter: brightness(0.7);
-    opacity: 1!important;
-    transition:all .2s!important;
-    background-color: #00000020;
-}
-.emu-thumb-slider .swiper-slide-thumb-active{
-    filter: brightness(1) !important;
-    background-color: white
-}
-
-
-.video-icon {
+.image.youtube-thumb::after {
+    content: "\25B6";
+    font-family: Arial, sans-serif;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 24px;
-    color: white;
     background: rgba(0, 0, 0, 0.6);
-    padding: 5px 10px;
-    pointer-events: none;
-}
-span.video-icon {
-    position: absolute;
-  
-    width: 100%;
-    height: 100%;
-    text-align: center;
+    aspect-ratio: 1;
+    color: white;
+    font-size: 24px;
+    padding: 0 0 0 5px;
+    width:50px;
+    height: auto;
+    display: flex;
     justify-content: center;
     align-items: center;
-    display: flex
-;
-    color: white;
-    font-size: 3em;
-    background-color: #00000070;
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: none; /* Importante: ::after não pode receber eventos diretamente */
+}
+
+
+
+
+lite-youtube{
+    background-position: center!important;
+    background-size: cover!important;
 }
