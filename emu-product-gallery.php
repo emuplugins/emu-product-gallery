@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) exit;
 define('EPG_DIR', plugin_dir_path(__FILE__));
 
 require_once EPG_DIR . 'includes/classes/oembed.php';
+require_once EPG_DIR . 'includes/builders/core.php';
 
 // Load backend files
 if (is_admin()) {
