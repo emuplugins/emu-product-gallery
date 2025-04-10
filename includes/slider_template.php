@@ -11,7 +11,7 @@ class emuProductGallery
     private $fields = [];
     private $oembed = null;
 
-    public function __construct($post_id, $post_type, $fields = []) {
+    public function __construct($post_id, $post_type = '', $fields = []) {
         $this->post_id = $post_id;
         $this->post_type = $post_type;
         $this->fields = $fields;
@@ -20,25 +20,40 @@ class emuProductGallery
     }
 
     public function getFieldsValues() {
-
         $post_id = $this->post_id;
         $post_type = $this->post_type;
-
-        $gallery_ids = '';
-
-        if($post_type === 'product'){
-
+        $gallery_ids = [];
+    
+        // Se for produto, adiciona imagens da galeria do WooCommerce
+        if ($post_type === 'product') {
             $product = wc_get_product($post_id);
-
-            if($product){
+    
+            if ($product) {
                 $gallery_ids = $product->get_gallery_image_ids();
             }
+        } elseif(!empty($this->fields) && is_array($this->fields)) {
 
+            foreach ($this->fields as $field_key) {
+
+                $raw_value = get_post_meta($post_id, $field_key, true);
+    
+                if ($raw_value) {
+
+                    $ids = array_map('trim', explode(',', $raw_value));
+    
+                    foreach ($ids as $id) {
+                        if (is_numeric($id)) {
+                            $gallery_ids[] = (int) $id;
+                        }
+                        // Aqui você pode adicionar lógica extra caso precise validar URLs ou outros formatos
+                    }
+                }
+            }
         }
-
+    
         return $gallery_ids;
-
     }
+    
 
     public function getElementType($id) {
 
@@ -116,13 +131,18 @@ class emuProductGallery
 
 function emu_product_gallery_shortcode($atts) {
 
+    $atts = shortcode_atts([
+        'post_type' => 'product',
+        'fields'    => '', // campos personalizados separados por vírgula
+    ], $atts, 'emu_product_gallery');
+
     $post_id = get_the_ID();
 
-    $emuProductGallery = new emuProductGallery($post_id, 'product');
+    $emuProductGallery = new emuProductGallery($post_id, $atts['post_type'], $atts['fields']);
 
-    $gallery_ids = $emuProductGallery->getFieldsValues(); // retorna um array de IDs
+    $gallery_ids = $emuProductGallery->getFieldsValues();
 
-    if( ! is_array($gallery_ids)){
+    if (!is_array($gallery_ids) || empty($gallery_ids)) {
         return 'Nenhuma mídia.';
     }
 
