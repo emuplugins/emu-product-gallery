@@ -21,20 +21,15 @@ function onCustomButtonClick() {
     })
     .then(response => response.json())
     .then(data => {
-    if (data.success) {
-        alert('Embed adicionado com sucesso!');
-
-        document.querySelector("#menu-item-library").click();
-        OriginalFrame = '';
-
-    } else {
-        alert(data.message || 'Erro ao adicionar o embed.');
-    }
-})
-    .catch(error => {
-        console.error('Erro na requisição:', error);
-        alert('Erro ao processar a requisição.');
-    });
+        if (data.success) {
+            document.querySelector("#menu-item-library").click();
+            document.querySelector("#menu-item-browse").click();
+            wp.media.frame.content.get().collection.props.set({ignore: (+ new Date())});
+            wp.media.frame.content.get().options.selection.reset();
+        } else {
+            alert(data.message || 'Erro ao adicionar o embed.');
+        }
+    })
 }
 
 jQuery(document).ready(function ($) {
@@ -63,7 +58,7 @@ jQuery(document).ready(function ($) {
                 close: false,
                 items: {
                     custom_global_event: {
-                        text: 'Adicionar Embed',
+                        text: 'Adicionar',
                         style: 'primary',
                         priority: 80,
                         requires: false,
@@ -109,7 +104,7 @@ jQuery(document).ready(function ($) {
                 style: 'margin-top: 10px; display: block;'
             });
 
-            this.$el.append('<h3>Formulário Personalizado</h3>');
+            this.$el.append('<h3>Adicionar vídeo do youtube</h3>');
             this.$el.append(this.input);
             this.$el.append(this.button);
 
@@ -132,6 +127,7 @@ jQuery(document).ready(function ($) {
 
     // Sobrescreve todos os MediaFrames para adicionar a aba personalizada globalmente
     const OriginalFrame = wp.media.view.MediaFrame.Select;
+
     wp.media.view.MediaFrame.Select = OriginalFrame.extend({
         initialize: function () {
             OriginalFrame.prototype.initialize.apply(this, arguments);
@@ -143,7 +139,7 @@ jQuery(document).ready(function ($) {
                     id: 'embed-global',
                     menu: 'default',
                     content: 'custom-global-content',
-                    title: 'Embed Personalizado',
+                    title: 'Youtube Video',
                     priority: 200,
                     toolbar: 'main-embed-global'
                 })

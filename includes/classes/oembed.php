@@ -258,17 +258,17 @@ add_action('rest_api_init', function () {
 
 function custom_add_embed_to_library(WP_REST_Request $request) {
 
-    function get_preview( $url ) {
+    function get_preview($url) {
         $oembed = _wp_oembed_get_object();
-        return $oembed->get_html( $url, [
+        return $oembed->get_html($url, [
             'width' => 400,
             'height' => 300
         ]);
     }
 
-    function get_embed_data( $url ) {
+    function get_embed_data($url) {
         $oembed = _wp_oembed_get_object();
-        return $oembed->get_data( $url );
+        return $oembed->get_data($url);
     }
 
     $url = esc_url_raw($request->get_param('oembed_url'));
@@ -277,21 +277,33 @@ function custom_add_embed_to_library(WP_REST_Request $request) {
         return new WP_Error('no_url', __('No URL provided.', 'oembed-in-library'), ['status' => 400]);
     }
 
+    // Verificação se é um link do YouTube
+    if (
+        strpos($url, 'youtu') === false
+    ) {
+        return new WP_Error('invalid_url', __('Envie um vídeo do youtube.', 'oembed-in-library'), ['status' => 400]);
+    }
+
     $html = get_preview($url);
     $data = get_embed_data($url);
 
-    $descricao = sanitize_text_field( 'Para que este vídeo funcione, o plugin Emu Product Gallery deve estar instalado!' );
+
+    //  Verificação se é um link do YouTube
+    if (! $data) {
+        return new WP_Error('invalid_url', __('Envie um vídeo do youtube.', 'oembed-in-library'), ['status' => 400]);
+    }
+
+    $descricao = sanitize_text_field('Para que este vídeo funcione, o plugin Emu Product Gallery deve estar instalado!');
     
-    // Cria o attachment com o HTML
-    $post_id = wp_insert_post( [
-        'post_title' => isset( $data->title ) ? sanitize_text_field( $data->title ) : $url,
+    $post_id = wp_insert_post([
+        'post_title'     => isset($data->title) ? sanitize_text_field($data->title) : $url,
         'post_content'   => $descricao,
         'post_status'    => 'inherit',
         'post_author'    => get_current_user_id(),
         'post_type'      => 'attachment',
         'guid'           => $url,
         'post_mime_type' => 'oembed/external'
-    ] );
+    ]);
 
     if (is_wp_error($post_id)) {
         return new WP_Error('insert_failed', __('Failed to insert embed.', 'oembed-in-library'), ['status' => 500]);
@@ -305,6 +317,5 @@ function custom_add_embed_to_library(WP_REST_Request $request) {
         'success' => true,
         'post_id' => $post_id,
         'message' => __('Embed added to library.', 'oembed-in-library'),
-        // 'redirect_url' => admin_url('upload.php?mode=grid')
     ];
 }
