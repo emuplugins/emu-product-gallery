@@ -405,8 +405,6 @@ class Prefix_Element_Test extends \Bricks\Element {
 
 
 
-
-
     // Example CSS
     $this->controls['thumbPos'] = [
       'tab' => 'content',
@@ -424,8 +422,73 @@ class Prefix_Element_Test extends \Bricks\Element {
       'default' => 'left', // Option key
     ];
 
-  }
 
+    // Example CSS
+    $this->controls['providers'] = [
+      'tab' => 'content',
+      'group' => 'settings',
+      'label' => esc_html__( 'Providers', 'bricks' ),
+      'type' => 'select',
+      'options' => [
+        'woocommerce' => esc_html__( 'Woo Gallery', 'bricks' ),
+        'thumbnail' => esc_html__( 'Thumbnail', 'bricks' ),
+        'fieldKey' => esc_html__( 'Field Key', 'bricks' ),
+        'itemsList' => esc_html__( "ID's | Url's", 'bricks' ),
+      ],
+      'inline' => true,
+      'placeholder' => esc_html__( 'Select', 'bricks' ),
+      'multiple' => true, 
+      'clearable' => true,
+      'default' => ['thumbnail','woocommerce']
+    ];
+
+    $this->controls['fields'] = [
+      'tab' => 'content',
+      'tab' => 'settings',
+      'label' => esc_html__( 'Fields', 'bricks' ),
+      'type' => 'text',
+      'spellcheck' => true, // Default: false
+      // 'trigger' => 'enter', // Default: 'enter'
+      'inlineEditing' => true,
+      'placeholder' => 'field_1, field_2',
+    ];
+    
+    $this->controls['itemsList'] = [
+      'tab' => 'content',
+      'tab' => 'settings',
+      'label' => esc_html__( 'Items', 'bricks' ),
+      'type' => 'text',
+      'spellcheck' => true, // Default: false
+      // 'trigger' => 'enter', // Default: 'enter'
+      'inlineEditing' => true,
+      'placeholder' => '2943, https://mysite.com/path/to/image, 4128',
+    ];
+
+
+
+
+    // $this->controls['itemsList2'] = [
+    //   'tab' => 'content',
+    //   'label' => esc_html__( 'Repeater', 'bricks' ),
+    //   'type' => 'repeater',
+    //   'titleProperty' => 'title', // Default 'title'
+    //   'default' => [
+    //     [
+    //       'title' => 'Design',
+    //     ],
+    //   ],
+    //   'placeholder' => esc_html__( 'Title placeholder', 'bricks' ),
+    //   'fields' => [
+    //     'media' => [
+    //       'label' => esc_html__( 'image', 'bricks' ),
+    //       'type' => 'image',
+    //       'mime'     => 'oembed/external'
+    //     ],
+    //   ],
+    // ];
+
+
+  }
   // Enqueue element styles and scripts
   public function enqueue_scripts() {
 
@@ -475,16 +538,47 @@ class Prefix_Element_Test extends \Bricks\Element {
         }
     }
 
-    
+    $shortcodeAttrs = [];
+   
     // Render element HTML
+    if(isset($this->settings['providers'])){
 
-    // '_root' attribute is required (contains element ID, class, etc.)
+      $providers = $this->settings['providers'];
+      
 
-    echo '<div '.$this->render_attributes('_root').' style="'.$styles.'">';
+    foreach($providers as $provider){
 
-    echo do_shortcode('[emu_product_gallery thumbnail woocommerce direction="'.$direction.'" customattr="true" enqueue="false"]');
+        if($provider === 'woocommerce'){
+            $shortcodeAttrs[] = 'woocommerce';
+        }
+    
+        if($provider === 'thumbnail'){
+            $shortcodeAttrs[] = 'thumbnail';
+        }
+    
+        if ($provider === 'fieldKey') {
 
+          $fields = isset($this->settings['fields']) ? $this->settings['fields'] : '';
+
+          $shortcodeAttrs[] = 'fields="' . $fields . '"';
+        }
+      
+        if($provider === 'itemsList'){
+          
+            $shortcodeAttrs[] = 'itemsList="' . $this->settings['itemsList'] . '"';
+        }
+
+    }
+    }
+    
+    // Converte o array em uma string de atributos
+    $shortcodeAttrString = implode(' ', $shortcodeAttrs);
+    
+    // Exibe o shortcode
+    echo '<div ' . $this->render_attributes('_root') . ' style="' . $styles . '">';
+    echo do_shortcode('[emu_product_gallery ' . $shortcodeAttrString . ' direction="' . $direction . '" customattr="true" enqueue="false"]');
     echo '</div>';
+    
     
   }
 }
