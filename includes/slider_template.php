@@ -54,7 +54,7 @@ class emuProductGallery
             }
 
             if($value === 'woocommerce'){
-
+                if ( !class_exists( 'WooCommerce' ) ) return;
                 if ($value) {
                     $product = wc_get_product($post_id);
                     if ($product) {
