@@ -1,3 +1,3 @@
 <?php
 
-require_once('bricks/core.php');
+require_once( __DIR__ . '/Bricks/core.php');
