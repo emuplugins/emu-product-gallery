@@ -24,12 +24,29 @@ function onCustomButtonClick() {
         if (data.success) {
             document.querySelector("#menu-item-library").click();
             document.querySelector("#menu-item-browse").click();
-            wp.media.frame.content.get().collection.props.set({ignore: (+ new Date())});
+    
+            // Força recarregar a coleção
+            wp.media.frame.content.get().collection.props.set({ ignore: (+new Date()) });
             wp.media.frame.content.get().options.selection.reset();
+    
+            // Aguarda os itens da galeria carregarem
+            const tryClickAttachment = () => {
+                const firstItem = document.querySelector('.attachments li');
+                if (firstItem) {
+                    firstItem.click();
+                } else {
+                    // Tenta novamente depois de 100ms
+                    setTimeout(tryClickAttachment, 100);
+                }
+            };
+    
+            tryClickAttachment();
+    
         } else {
             alert(data.message || 'Erro ao adicionar o embed.');
         }
-    })
+    });
+    
 }
 
 jQuery(document).ready(function ($) {

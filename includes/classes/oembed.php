@@ -51,7 +51,7 @@ class EPGEmbedInLibrary{
         if ( $hook !== 'media_page_oembedinlibrary' ){
             
             wp_enqueue_script(
-                'addmbed_js', $plugin_url . '/assets/js/add-mbed.js',
+                'addmbed_js', $plugin_url . '/assets/js/add-embed.js',
                 [ 'jquery' ],
                 '1.1',
                 true
