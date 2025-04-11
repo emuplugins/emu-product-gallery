@@ -81,7 +81,7 @@ p.add_product_images a:after{
 }
 
 div#woocommerce-product-images:after {
-    content: "Lembre-se de não entrar no editor caso tenha desativado o plugin. \A \A Do contrário, os vídeos serão removidos da galeria, restando apenas as imagens.";
+    content: "Não entre no editor caso você tenha desativado o plugin 'Emu Produtc Gallery'. \A \A Do contrário, os vídeos serão removidos da galeria, restando apenas as imagens.";
     white-space: pre-line;
     padding: 10px;
     display: block;
