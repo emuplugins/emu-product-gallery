@@ -1,23 +1,71 @@
-document.addEventListener('DOMContentLoaded', function () {
+let mainInstance = null;
+let thumbInstance = null;
+
+function mountEmuProductGallery() {
     const mainEl = document.querySelector('#emu-splide');
     const thumbsEl = document.querySelector('#emu-splide-thumbs');
 
-    if (mainEl && thumbsEl) {
-        const main = new Splide(mainEl);
-        const thumbs = new Splide(thumbsEl);
+    if (!mainEl || !thumbsEl) return;
 
-        thumbs.mount();
-        main.sync(thumbs);
-
-        main.on('move', function (newIndex) {
-            document.querySelectorAll('#emu-splide-thumbs .splide__slide').forEach((el, idx) => {
-                el.classList.toggle('is-active', idx === newIndex);
-            });
-        });
-
-        main.mount();
+    // Se já estiverem montadas, destruí-las
+    if (mainInstance) {
+        mainInstance.destroy();
+        mainInstance = null;
     }
+
+    if (thumbInstance) {
+        thumbInstance.destroy();
+        thumbInstance = null;
+    }
+
+    // Criar novas instâncias
+    const main = new Splide(mainEl);
+    const thumbs = new Splide(thumbsEl);
+
+    thumbInstance = thumbs.mount();
+    main.sync(thumbs);
+
+    main.on('move', function (newIndex) {
+        // Atualiza o estado das thumbs
+        document.querySelectorAll('#emu-splide-thumbs .splide__slide').forEach((el, idx) => {
+            el.classList.toggle('is-active', idx === newIndex);
+        });
+    
+        // Itera pelos slides principais
+        main.Components.Slides.forEach(({ slide }, idx) => {
+            const liteYoutube = slide.querySelector('lite-youtube');
+    
+            if (!liteYoutube) return;
+    
+            if (idx === newIndex) {
+
+                // Dá play clicando no slide atual
+                if (!liteYoutube.classList.contains('lyt-activated')) {
+
+                    liteYoutube.click();
+                }
+
+            } else {
+
+                iframe =  liteYoutube.querySelector('iframe');
+
+                if (iframe){
+                    iframe.remove();
+                }
+
+                liteYoutube.classList.remove('lyt-activated');
+            }
+        });
+    });
+    
+
+    mainInstance = main.mount();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    mountEmuProductGallery();
 });
+
 
 
 

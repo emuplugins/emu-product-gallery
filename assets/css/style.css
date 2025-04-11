@@ -1,23 +1,39 @@
 
 .emu-splide-wrapper{
-    width:100%
+    width:100%;
+    display: flex; gap: 20px;
 }
 
 .emu-splide-wrapper :is(button), .emu-splide-wrapper :is(button):hover, .emu-splide-wrapper :is(button):focus{
 
     padding:0;
-    background-color:transparent;
+    background-color: white;
     border:none;
 
 }
 
 :root{
-    --slider-height:300px
+    --slider-height:500px
 }
 
 .splide__track--nav>.splide__list>.splide__slide{
-    border: none!important;
-    width:fit-content!important
+    width:fit-content!important;
+    overflow: hidden;
+}
+
+.splide__arrow{
+    height: auto!important;
+    width: 40px;
+    aspect-ratio: 1!important;
+    opacity: 1!important;
+}
+.splide__arrow svg{
+    width: 20px;
+    height: fit-content!important;
+}
+#emu-splide .splide__track{
+    box-sizing: border-box!important;
+    height:var(--slider-height);
 }
 
 #emu-splide-thumbs-list{
@@ -33,18 +49,25 @@
     max-height:var(--slider-height);
     flex-grow:0
 }
+#emu-splide-thumbs ul li, #emu-splide .splide__track{
+    border-radius:10px;
+    border:none
+}
 
 #emu-splide-thumbs .splide__slide img {
+width: 100%;
+}
+#emu-splide-thumbs .splide__slide .image {
     width: 100px;
     height: 100px;
-    object-fit: cover;
-    transition: all.2s;
-    opacity:0.4
+    transition: opacity.2s;
+    opacity:0.4;
 }
 
-#emu-splide-thumbs .is-active img {
+#emu-splide-thumbs .is-active .image {
     opacity:1
 }
+
 
 #emu-splide {
     width: 100px;
@@ -98,13 +121,16 @@
 }
 
 
+
+:is(lite-youtube, #emu-splide .splide__slide img){
+    background-position: center!important;
+    background-repeat: no-repeat!important;
+    background-size: 100% 100%;
+    object-fit: stretch;
+}
+
 /* ===============  LITE YOUTUBE  ================= */
 
-
-lite-youtube{
-    background-position: center!important;
-    background-size: 100% 100%!important;
-}
 
 lite-youtube {
     background-color: #000;
@@ -114,7 +140,8 @@ lite-youtube {
     background-position: center center;
     background-size: cover;
     cursor: pointer;
-    max-width: 720px;
+    max-width: 100%;
+    width:100%;
 }
 
 /* gradient */
@@ -126,10 +153,11 @@ lite-youtube::before {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADGCAYAAAAT+OqFAAAAdklEQVQoz42QQQ7AIAgEF/T/D+kbq/RWAlnQyyazA4aoAB4FsBSA/bFjuF1EOL7VbrIrBuusmrt4ZZORfb6ehbWdnRHEIiITaEUKa5EJqUakRSaEYBJSCY2dEstQY7AuxahwXFrvZmWl2rh4JZ07z9dLtesfNj5q0FU3A5ObbwAAAABJRU5ErkJggg==);
     background-position: top;
     background-repeat: repeat-x;
-    height: 60px;
+    height: 100%;
     padding-bottom: 50px;
     width: 100%;
     transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
+    background-size: contain;
 }
 
 /* responsive iframe with a 16:9 aspect ratio

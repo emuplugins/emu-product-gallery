@@ -8,11 +8,31 @@ class emuProductGallery
     private $post_id = null;
     private $oembed = null;
     private $options = [];
+    
 
     public function __construct($post_id, $options = []) {
+        
         $this->post_id = $post_id;
         $this->options = $options;
         $this->oembed = _wp_oembed_get_object();
+
+        $enqueueScripts = isset( $options['enqueue']) ?  $options['enqueue'] : true;
+
+        $enqueueScripts = filter_var($enqueueScripts, FILTER_VALIDATE_BOOLEAN);
+
+        $this->enqueueScripts($enqueueScripts);
+        
+    }
+    
+    public function enqueueScripts($enqueueScripts) {
+        
+        if($enqueueScripts){
+
+            wp_enqueue_script('epg-splide-script');
+            wp_enqueue_script('emu-product-gallery-script');
+                
+        };
+
     }
 
     public function getFieldsValues() {
@@ -159,6 +179,8 @@ function emu_product_gallery_shortcode($atts) {
     }
 
     $direction = isset($atts['direction']) ? $atts['direction'] : 'ltr';
+    
+    $customAttr = isset($atts['customattr']) ? $atts['customattr'] : false;
 
     $fdRow = '';
     $fdColumn = '';
@@ -175,9 +197,19 @@ function emu_product_gallery_shortcode($atts) {
         $thumbsHeight = 'min-width: auto; min-height:auto';
         $mainSliderWidth = 'min-width: 100%;';
     }
-
+    
     ob_start(); ?>
-    <div class="emu-splide-wrapper" style="display: flex; gap: 20px; <?= $fdColumn ?>;">
+
+    
+
+    <?php 
+        if(empty($customAttr)) :
+    ?>
+
+    <div style="<?= $fdColumn ?>;" class="emu-splide-wrapper">
+
+    <?php endif;?>
+
 
         <div class="splide" id="emu-splide-thumbs" data-splide='{"direction": "<?= $direction ?>", "height": "auto", "fixedWidth": "auto", "fixedHeight": "auto", "isNavigation": true, "pagination": false, "arrows": false, "focus": 0}' style="<?= $thumbsHeight ?>">
             <div class="splide__track">
@@ -200,7 +232,15 @@ function emu_product_gallery_shortcode($atts) {
                 </ul>
             </div>
         </div>
+    
+
+    <?php 
+    if(empty($customAttr)) :
+    ?>
+
     </div>
+
+    <?php endif;?>
 
     <?php
     return ob_get_clean();
