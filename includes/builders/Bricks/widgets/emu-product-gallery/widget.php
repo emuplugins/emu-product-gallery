@@ -402,6 +402,31 @@ class Prefix_Element_Test extends \Bricks\Element {
 
     ];
 
+    
+
+    $this->controls['lightboxInfo'] = [
+      'tab' => 'content',
+      'group' => 'styles',
+      'content' => esc_html__( 'Lightbox', 'bricks' ),
+      'type' => 'info',
+    ];
+
+    $this->controls['lightboxBorder'] = [
+      'tab' => 'content',
+      'group' => 'styles',
+      'label' => esc_html__( 'Borda', 'bricks' ),
+      'type' => 'border',
+      'css' => [
+        [
+          'property' => 'border',
+          'selector' => '.epg-lightbox-content',
+        ],
+      ],
+      'inline' => true,
+      'small' => true,
+
+    ];
+
 
 
     // Example CSS

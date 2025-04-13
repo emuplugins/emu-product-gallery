@@ -1,13 +1,16 @@
+// Instâncias globais dos sliders principal e de thumbs
 let mainInstance = null;
 let thumbInstance = null;
 
+// Função principal que inicializa e sincroniza os sliders
 function mountEmuProductGallery() {
-    const mainEl = document.querySelector('#emu-splide');
-    const thumbsEl = document.querySelector('#emu-splide-thumbs');
+    let mainEl = document.querySelector('#emu-splide');
+    let thumbsEl = document.querySelector('#emu-splide-thumbs');
 
+    // Verifica se os elementos existem
     if (!mainEl || !thumbsEl) return;
 
-    // Se já estiverem montadas, destruí-las
+    // Destroi instâncias existentes antes de recriar
     if (mainInstance) {
         mainInstance.destroy();
         mainInstance = null;
@@ -18,208 +21,206 @@ function mountEmuProductGallery() {
         thumbInstance = null;
     }
 
-    // Criar novas instâncias
-    const main = new Splide(mainEl);
-    const thumbs = new Splide(thumbsEl);
+    // Cria novas instâncias dos sliders
+    mainEl = new Splide(mainEl);
+    thumbsEl = new Splide(thumbsEl);
 
-    thumbInstance = thumbs.mount();
-    main.sync(thumbs);
+    // Monta os thumbs e sincroniza com o principal
+    thumbInstance = thumbsEl.mount();
+    mainEl.sync(thumbsEl);
 
-    main.on('move', function (newIndex) {
-        // Atualiza o estado das thumbs
+    // Evento de troca de slide
+    mainEl.on('move', function (newIndex) {
+        // Atualiza a classe 'is-active' nas thumbs
         document.querySelectorAll('#emu-splide-thumbs .splide__slide').forEach((el, idx) => {
             el.classList.toggle('is-active', idx === newIndex);
         });
-    
-        // Itera pelos slides principais
-        main.Components.Slides.forEach(({ slide }, idx) => {
+
+        // Gerencia o play/stop de vídeos do tipo lite-youtube
+        mainEl.Components.Slides.forEach(({ slide }, idx) => {
             const liteYoutube = slide.querySelector('lite-youtube');
-    
             if (!liteYoutube) return;
-    
+
             if (idx === newIndex) {
 
-                // Dá play clicando no slide atual
+                const epgLightbox = document.querySelector('.epg-lightbox');
+
+                const isVisible = window.getComputedStyle(epgLightbox).display !== 'none';
+                
+                if (isVisible) return;
+
                 if (!liteYoutube.classList.contains('lyt-activated')) {
-
-                    liteYoutube.click();
+                    liteYoutube.click(); // Ativa o vídeo
                 }
-
             } else {
-
-                iframe =  liteYoutube.querySelector('iframe');
-
-                if (iframe){
-                    iframe.remove();
-                }
-
+                const iframe = liteYoutube.querySelector('iframe');
+                if (iframe) iframe.remove(); // Remove o iframe ao sair do slide
                 liteYoutube.classList.remove('lyt-activated');
             }
         });
-    });
-    
 
-    mainInstance = main.mount();
+        // Atualiza o conteúdo do lightbox apenas se ele estiver visível
+        const epgLightbox = document.querySelector('.epg-lightbox');
+        const isVisible = window.getComputedStyle(epgLightbox).display !== 'none';
+        if (!isVisible) return;
+
+        const indexAtual = newIndex + 1;
+        const currentElement = document.querySelector('#emu-splide .splide__slide:nth-child(' + indexAtual + ')');
+        if (!currentElement) return;
+
+        const currentChild = currentElement.querySelector(':first-child');
+        changeLightboxImage(currentChild);
+    });
+
+    // Evento ao montar o slider principal
+    mainEl.on('mounted', function () {
+        let currentIndex = mainEl.index;
+        let currentElement = document.querySelectorAll('#emu-splide .splide__slide :first-child')[currentIndex];
+        changeLightboxImage(currentElement);
+    });
+
+    // Monta o slider principal
+    mainInstance = mainEl.mount();
 }
 
+// Inicializa a galeria ao carregar o DOM
 document.addEventListener('DOMContentLoaded', () => {
     mountEmuProductGallery();
+
+    const nextArrow = document.querySelector('.epg-lightbox .epg-lightbox-arrow.right');
+    const prevArrow = document.querySelector('.epg-lightbox .epg-lightbox-arrow.left');
+    const epgLightbox = document.querySelector('.epg-lightbox');
+
+    // Navegação no lightbox
+    if (nextArrow) {
+        nextArrow.addEventListener('click', () => {
+            mainInstance.go('>');
+        });
+    }
+
+    if (prevArrow) {
+        prevArrow.addEventListener('click', () => {
+            mainInstance.go('<');
+        });
+    }
+
+    // Fecha o lightbox ao clicar fora do conteúdo
+    if (epgLightbox) {
+        epgLightbox.addEventListener('click', (event) => {
+            if (event.target === epgLightbox) {
+                toggleLightbox();
+            }
+        });
+    }
+
+    window.parent.addEventListener('click', () => {
+        const epgLightboxElement = document.querySelector('.epg-lightbox');
+    
+        if (epgLightboxElement) {
+            const isVisible = window.getComputedStyle(epgLightboxElement).display !== 'none';
+    
+            if (isVisible) {
+                toggleLightbox();
+            }
+        }
+
+    });
+    
 });
 
+// Atualiza o conteúdo do lightbox com o slide atual
+function changeLightboxImage(element = '', type = 'image') {
+    const epgLightbox = document.querySelector('.epg-lightbox');
+    const content = epgLightbox.querySelector('.epg-lightbox-content');
+
+    const isVisible = window.getComputedStyle(epgLightbox).display !== 'none';
+    if (!isVisible) return;
+
+    content.innerHTML = '';
+
+    if (element instanceof HTMLElement) {
+        content.appendChild(element.cloneNode(true));
+        content.firstElementChild.click(); // Ativa o conteúdo, se necessário
+    }
+}
+
+// Alterna a visibilidade do lightbox
+function toggleLightbox() {
+    const epgLightbox = document.querySelector('.epg-lightbox');
+    const isVisible = window.getComputedStyle(epgLightbox).display !== 'none';
+    const content = epgLightbox.querySelector('.epg-lightbox-content');
+
+    // Remove o iframe do lite-youtube (se existir)
+        const liteYoutube = document.querySelector('lite-youtube');
+        if (liteYoutube) {
+            const iframe = liteYoutube.querySelector('iframe');
+            if (iframe) iframe.remove();
+        }
+
+
+    if (isVisible) {
+        // Oculta o lightbox e limpa o conteúdo
+        epgLightbox.style.display = 'none';
+        content.innerHTML = '';
+    } else {
+        // Mostra o lightbox
+        epgLightbox.style.display = 'flex';
+
+        // Recupera o slide atual e injeta no lightbox
+        const currentIndex = mainInstance?.index ?? 0;
+        const currentSlide = document.querySelectorAll('#emu-splide .splide__slide')[currentIndex];
+        if (currentSlide) {
+            const currentElement = currentSlide.querySelector(':first-child');
+            changeLightboxImage(currentElement);
+        }
+    }
+}
 
 
 
+let originalMainGalleryHTML = '';
+let originalThumbGalleryHTML = '';
 
+jQuery(function($) {
+  // Captura o HTML original assim que o DOM estiver pronto
+  const mainWrapper = document.querySelector('#emu-splide .splide__list');
+  const thumbWrapper = document.querySelector('#emu-splide-thumbs .splide__list');
 
+  if (mainWrapper && thumbWrapper) {
+    originalMainGalleryHTML = mainWrapper.innerHTML;
+    originalThumbGalleryHTML = thumbWrapper.innerHTML;
+  }
 
-// jQuery(function($) {
-//   // Variables to store the Swiper instances
-//   var mainSwiper   = null,
-//       thumbSwiper  = null,
-//       // Stores the original gallery HTML to restore later
-//       originalMainGallery  = $('.emu-main-slider .swiper-wrapper').html(),
-//       originalThumbGallery = $('.emu-thumb-slider .swiper-wrapper').html();
+  $('form.variations_form').on('found_variation', function(event, variation) {
+    if (variation && variation.image && variation.image.full_src) {
+    const imgSrc = variation.image.full_src;
+      const imgAlt = variation.image.alt || '';
 
-//   // Show the preloader and hide the swiper-wrapper
-//   function showPreloader() {
-//    // nothing to-do...
-//   }
+      const variationSlide = `
+        <li class="splide__slide">
+        <div class="image">
+          <img src="${imgSrc}" alt="${imgAlt}">
+          </div>
+        </li>`;
 
-//   // Hide the preloader and make swiper-wrapper visible
-//   function hidePreloader() {
-//     $('.emu-product-gallery-wrapper').removeClass('loading');  // Remove loading class to hide preloader
-//   }
+      if (mainWrapper && thumbWrapper) {
+        mainWrapper.innerHTML = variationSlide + originalMainGalleryHTML;
+        thumbWrapper.innerHTML = variationSlide + originalThumbGalleryHTML;
+      }
 
-//   // Function to pause media (videos/iframes) on non-visible slides
-//   function pauseMedia() {
-//     $('.swiper-slide').each(function() {
-//       $(this).find('video').each(function() {
-//         if (!this.paused) this.pause();
-//       });
-//       var iframe = $(this).find('iframe');
-//       if (iframe.length) {
-//         var src = iframe.attr('src');
-//         iframe.attr('src', '');
-//         iframe.attr('src', src);
-//       }
-//     });
-//   }
+      mountEmuProductGallery();
+    }
+  });
 
-//   // Function to initialize (or reinitialize) the sliders
-//   function initSwipers() {
-//     // Show preloader while initializing
-//     showPreloader();
+  $('form.variations_form').on('reset_data', function() {
+    if (mainWrapper && thumbWrapper) {
+      mainWrapper.innerHTML = originalMainGalleryHTML;
+      thumbWrapper.innerHTML = originalThumbGalleryHTML;
+    }
 
-//     // If an instance already exists, destroy it to avoid conflicts
-//     if (mainSwiper && typeof mainSwiper.destroy === 'function') {
-//       mainSwiper.destroy(true, true);
-//       mainSwiper = null;
-//     }
-//     if (thumbSwiper && typeof thumbSwiper.destroy === 'function') {
-//       thumbSwiper.destroy(true, true);
-//       thumbSwiper = null;
-//     }
-    
-//     // Initialize the thumbnail slider (thumbSwiper)
-//     thumbSwiper = new Swiper('.emu-thumb-slider', {
-//       spaceBetween: 10,
-//       slidesPerView: 4,
-//       freeMode: true,
-//       watchSlidesVisibility: true,
-//       watchSlidesProgress: true,
-//       loop: false
-//     });
-    
-//     // Initialize the main slider without using automatic navigation
-//     mainSwiper = new Swiper('.emu-main-slider', {
-//       spaceBetween: 0,
-//       thumbs: {
-//         swiper: thumbSwiper
-//       },
-//       loop: false,
-//       on: {
-//         slideChange: function() {
-//           // Remove disabled classes to keep the arrows active
-//           $('.swiper-button-next, .swiper-button-prev').removeClass('swiper-button-disabled');
-//         },
-//         init: function() {
-//           // Hide preloader when initialization is done
-//           hidePreloader();
-//         }
-//       }
-//     });
-    
-//     // Set up click event for the "next" arrow
-//     $('.swiper-button-next').off('click').on('click', function(e) {
-//       e.preventDefault();
-//       pauseMedia();
-//       var totalSlides = mainSwiper.slides.length;
-//       var currentIndex = mainSwiper.activeIndex;
-      
-//       // If it's the last slide, go back to the first; otherwise, move to the next slide
-//       if (currentIndex >= totalSlides - 1) {
-//          mainSwiper.slideTo(0);
-//       } else {
-//          mainSwiper.slideNext();
-//       }
-//     });
-    
-//     // Set up click event for the "previous" arrow
-//     $('.swiper-button-prev').off('click').on('click', function(e) {
-//       e.preventDefault();
-//       pauseMedia();
-//       var totalSlides = mainSwiper.slides.length;
-//       var currentIndex = mainSwiper.activeIndex;
-      
-//       // If it's the first slide, go to the last; otherwise, move to the previous slide
-//       if (currentIndex <= 0) {
-//          mainSwiper.slideTo(totalSlides - 1);
-//       } else {
-//          mainSwiper.slidePrev();
-//       }
-//     });
-    
-//     // Set up click event for thumbnails to change the main slide
-//     $('.emu-thumb-slider .swiper-slide').off('click').on('click', function() {
-//       pauseMedia();
-//       var index = $(this).index();
-//       mainSwiper.slideTo(index);
-//     });
-//   }
-
-//   // Initialize the sliders on page load
-//   initSwipers();
-
-//   // When a variation is selected, update the gallery:
-//   // The new gallery will contain the variation image first, followed by the original product images
-//   $('form.variations_form').on('found_variation', function(event, variation) {
-//     if (variation && variation.image && variation.image.src) {
-//       // Create the variation image slide
-//       var variationSlide = '<div class="swiper-slide">' +
-//                               '<img src="' + variation.image.src + '" alt="' + (variation.image.alt ? variation.image.alt : '') + '">' +
-//                            '</div>';
-      
-//       // Concatenate the variation image with the original gallery
-//       var newMainGallery  = variationSlide + originalMainGallery;
-//       var newThumbGallery = variationSlide + originalThumbGallery;
-      
-//       // Update the gallery HTML
-//       $('.emu-main-slider .swiper-wrapper').html(newMainGallery);
-//       $('.emu-thumb-slider .swiper-wrapper').html(newThumbGallery);
-      
-//       // Reinitialize the Swipers to reflect the update
-//       initSwipers();
-//     }
-//   });
-
-//   // When the variation is reset, restore the original product gallery
-//   $('form.variations_form').on('reset_data', function() {
-//     $('.emu-main-slider .swiper-wrapper').html(originalMainGallery);
-//     $('.emu-thumb-slider .swiper-wrapper').html(originalThumbGallery);
-//     initSwipers();
-//   });
-// });
-
+    mountEmuProductGallery();
+  });
+});
 
 
 // ================ Youtbe Lite ================= //
