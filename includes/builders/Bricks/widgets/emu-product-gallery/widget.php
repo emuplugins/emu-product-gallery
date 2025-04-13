@@ -94,22 +94,6 @@ class Prefix_Element_Test extends \Bricks\Element {
       'type' => 'info',
     ];
 
-    $this->controls['slideBorder'] = [
-      'tab' => 'content',
-      'group' => 'styles',
-      'label' => esc_html__( 'Borda', 'bricks' ),
-      'type' => 'border',
-      'css' => [
-        [
-          'property' => 'border',
-          'selector' => '#emu-splide .splide__track',
-        ],
-      ],
-      'inline' => true,
-      'small' => true,
-
-    ];
-
     // Example CSS
     $this->controls['slideImageSize'] = [
       'tab' => 'content',
@@ -156,7 +140,22 @@ class Prefix_Element_Test extends \Bricks\Element {
       'default' => 'contain',
     ];
 
+    
+    $this->controls['slideBorder'] = [
+      'tab' => 'content',
+      'group' => 'styles',
+      'label' => esc_html__( 'Borda', 'bricks' ),
+      'type' => 'border',
+      'css' => [
+        [
+          'property' => 'border',
+          'selector' => '#emu-splide .splide__track',
+        ],
+      ],
+      'inline' => true,
+      'small' => true,
 
+    ];
 
     $this->controls['thumbsInfo'] = [
       'tab' => 'content',
