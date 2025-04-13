@@ -245,7 +245,7 @@ class Prefix_Element_Test extends \Bricks\Element {
         'css' => [
           [
             'property' => 'height',
-            'selector' => '#emu-splide-thumbs li',
+            'selector' => '#emu-splide-thumbs .image',
             'value' => '%s !important',
           ],
         ],
@@ -452,40 +452,6 @@ class Prefix_Element_Test extends \Bricks\Element {
       'inlineEditing' => true,
       'placeholder' => 'field_1, field_2',
     ];
-    
-    $this->controls['itemsList'] = [
-      'tab' => 'content',
-      'tab' => 'settings',
-      'label' => esc_html__( 'Items', 'bricks' ),
-      'type' => 'text',
-      'spellcheck' => true, // Default: false
-      // 'trigger' => 'enter', // Default: 'enter'
-      'inlineEditing' => true,
-      'placeholder' => '2943, https://mysite.com/path/to/image, 4128',
-    ];
-
-
-
-
-    // $this->controls['itemsList2'] = [
-    //   'tab' => 'content',
-    //   'label' => esc_html__( 'Repeater', 'bricks' ),
-    //   'type' => 'repeater',
-    //   'titleProperty' => 'title', // Default 'title'
-    //   'default' => [
-    //     [
-    //       'title' => 'Design',
-    //     ],
-    //   ],
-    //   'placeholder' => esc_html__( 'Title placeholder', 'bricks' ),
-    //   'fields' => [
-    //     'media' => [
-    //       'label' => esc_html__( 'image', 'bricks' ),
-    //       'type' => 'image',
-    //       'mime'     => 'oembed/external'
-    //     ],
-    //   ],
-    // ];
 
 
   }
@@ -562,12 +528,6 @@ class Prefix_Element_Test extends \Bricks\Element {
 
           $shortcodeAttrs[] = 'fields="' . $fields . '"';
         }
-      
-        if($provider === 'itemsList'){
-          
-            $shortcodeAttrs[] = 'itemsList="' . $this->settings['itemsList'] . '"';
-        }
-
     }
     }
     
