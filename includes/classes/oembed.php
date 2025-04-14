@@ -271,30 +271,30 @@ function custom_add_embed_to_library(WP_REST_Request $request) {
         return $oembed->get_data($url);
     }
 
+    function get_youtube_id($url) {
+        preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^\?&"\'<> #]+)/', $url, $matches);
+        return $matches[1] ?? null;
+    }
+
     $url = esc_url_raw($request->get_param('oembed_url'));
 
     if (!$url) {
         return new WP_Error('no_url', __('No URL provided.', 'oembed-in-library'), ['status' => 400]);
     }
 
-    // Verificação se é um link do YouTube
-    if (
-        strpos($url, 'youtu') === false
-    ) {
+    if (strpos($url, 'youtu') === false) {
         return new WP_Error('invalid_url', __('Envie um vídeo do youtube.', 'oembed-in-library'), ['status' => 400]);
     }
 
     $html = get_preview($url);
     $data = get_embed_data($url);
 
-
-    //  Verificação se é um link do YouTube
-    if (! $data) {
+    if (!$data) {
         return new WP_Error('invalid_url', __('Envie um vídeo do youtube.', 'oembed-in-library'), ['status' => 400]);
     }
 
     $descricao = sanitize_text_field('Para que este vídeo funcione, o plugin Emu Product Gallery deve estar instalado!');
-    
+
     $post_id = wp_insert_post([
         'post_title'     => isset($data->title) ? sanitize_text_field($data->title) : $url,
         'post_content'   => $descricao,
@@ -309,8 +309,11 @@ function custom_add_embed_to_library(WP_REST_Request $request) {
         return new WP_Error('insert_failed', __('Failed to insert embed.', 'oembed-in-library'), ['status' => 500]);
     }
 
-    if (isset($data->thumbnail_url)) {
-        update_post_meta($post_id, '_oembed_thumbnail_url', esc_url_raw($data->thumbnail_url));
+    // Força o uso da thumbnail em alta resolução
+    $video_id = get_youtube_id($url);
+    if ($video_id) {
+        $thumbnail_url = "https://img.youtube.com/vi/{$video_id}/maxresdefault.jpg";
+        update_post_meta($post_id, '_oembed_thumbnail_url', esc_url_raw($thumbnail_url));
     }
 
     return [

@@ -252,8 +252,8 @@ class LiteYTEmbed extends HTMLElement {
 
         // Set up play button, and its visually hidden label
         if (!playBtnEl) {
-            playBtnEl = document.createElement('button');
-            playBtnEl.type = 'button';
+            playBtnEl = document.createElement('a');
+            playBtnEl.type = 'a';
             playBtnEl.classList.add('lty-playbtn');
             this.append(playBtnEl);
         }
