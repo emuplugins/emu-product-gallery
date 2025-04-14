@@ -269,22 +269,37 @@ lite-youtube.lyt-activated > .lty-playbtn {
 .epg-lightbox-arrow svg{
 
     stroke:rgb(255, 255, 255);
-    width:100px;
-    height:100px;
+    width:40px;
+    height:40px;
 }
 .epg-lightbox-arrow{
     cursor: pointer;
     pointer-events: auto!important;
+    display: flex
+;
+    justify-content: center;
+    align-items: center;
 }
 .epg-lightbox-arrow.left svg{
     transform:scaleX(-1)
 }
+
+
+
+
+
+
+
+
+
+
+
 .epg-lightbox-content{
     position:relative;
     width:1100px;
     max-width: 95%;
     display: flex;
-    aspect-ratio: 16/9!important;
+    aspect-ratio: 16/9;
     overflow: hidden;
 
 }
@@ -309,7 +324,7 @@ lite-youtube.lyt-activated > .lty-playbtn {
     user-select: none;
 }
 .epg-lightbox{
-    position: fixed;
+    position: fixed!important;
     min-height: 100vh;
     padding: 20px 0;
     width:100vw;
@@ -322,5 +337,5 @@ lite-youtube.lyt-activated > .lty-playbtn {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 1;
+    z-index: 1000;
 }

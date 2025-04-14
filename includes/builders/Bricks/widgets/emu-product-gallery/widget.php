@@ -427,6 +427,168 @@ class Prefix_Element_Test extends \Bricks\Element {
 
     ];
 
+    $this->controls['lightboxAspectRatio'] = [
+      'tab' => 'content',
+      'group' => 'styles',
+      'label' => esc_html__( 'Aspect Ratio', 'bricks' ),
+      'type' => 'text',
+      'spellcheck' => true, // Default: false
+      // 'trigger' => 'enter', // Default: 'enter'
+      'css' => [
+        [
+          'property' => 'aspect-ratio',
+          'selector' => '.epg-lightbox-content',
+        ],
+      ],
+      'default' => '16/9'
+    ];
+
+    $this->controls['lightboxWidth'] = [
+      'tab' => 'content',
+      'group' => 'styles',
+      'label' => esc_html__( 'Width', 'bricks' ),
+      'type' => 'slider',
+      'css' => [
+        [
+          'property' => 'width',
+          'selector' => '.epg-lightbox-content',
+          'value' => '%s !important',
+        ],
+      ],
+      'units' => [
+        'px' => [
+          'min' => 500,
+          'max' => 1500,
+          'step' => 1,
+        ],
+      ],
+      'default' => '1200px',
+      'description' => esc_html__( 'lightbox width', 'bricks' ),
+    ];
+
+    $this->controls['LightboxArrowsSpace'] = [
+      'tab' => 'content',
+      'group' => 'styles',
+      'label' => esc_html__( 'Arrows Space', 'bricks' ),
+      'type' => 'slider',
+      'css' => [
+        [
+          'property' => 'width',
+          'selector' => '.epg-lightbox-arrows',
+          'value' => '%s !important',
+        ],
+      ],
+      'units' => [
+        'px' => [
+          'min' => 500,
+          'max' => 1500,
+          'step' => 1,
+        ],
+      ],
+      'default' => '1400px',
+      'description' => esc_html__( 'lightbox width', 'bricks' ),
+    ];
+    
+
+    $this->controls['lightboxArrowIconColor'] = [
+      'tab' => 'content',
+      'group' => 'styles',
+      'label' => esc_html__( 'Background color', 'bricks' ),
+      'type' => 'color',
+      'inline' => true,
+      'css' => [
+        [
+          'property' => 'stroke',
+          'selector' => '.epg-lightbox-arrow svg',
+        ]
+      ],
+      'default' => [
+        'hex' => '#000',
+      ],
+    ];
+
+    $this->controls['lightboxArrowBackgroundColor'] = [
+      'tab' => 'content',
+      'group' => 'styles',
+      'label' => esc_html__( 'Background color', 'bricks' ),
+      'type' => 'color',
+      'inline' => true,
+      'css' => [
+        [
+          'property' => 'background-color',
+          'selector' => '.epg-lightbox-arrow',
+        ]
+      ],
+      'default' => [
+        'hex' => '#fff',
+      ],
+    ];
+
+    $this->controls['lightboxArrowsSize'] = [
+      'tab' => 'content',
+      'group' => 'styles',
+      'label' => esc_html__( 'Size', 'bricks' ),
+      'type' => 'slider',
+      'css' => [
+        [
+          'property' => 'width',
+          'selector' => '.epg-lightbox-arrow',
+          'value' => '%s !important; height: %s !important',
+        ],
+      ],
+      'units' => [
+        'px' => [
+          'min' => 0,
+          'max' => 100,
+          'step' => 1,
+        ],
+      ],
+      'default' => '40px',
+      'description' => esc_html__( 'Arrows size', 'bricks' ),
+    ];
+    
+    $this->controls['lightboxArrowsIconSize'] = [
+      'tab' => 'content',
+      'group' => 'styles',
+      'label' => esc_html__( 'Icon Size', 'bricks' ),
+      'type' => 'slider',
+      'css' => [
+        [
+          'property' => 'width',
+          'selector' => '.epg-lightbox-arrow svg',
+          'value' => '%s !important',
+        ],
+      ],
+      'units' => [
+        'px' => [
+          'min' => 0,
+          'max' => 100,
+          'step' => 1,
+        ],
+      ],
+      'default' => '20px',
+      'description' => esc_html__( 'Arrows size', 'bricks' ),
+    ];
+
+    $this->controls['lightboxArrowsBorder'] = [
+      'tab' => 'content',
+      'group' => 'styles',
+      'label' => esc_html__( 'Borda', 'bricks' ),
+      'type' => 'border',
+      'css' => [
+        [
+          'property' => 'border',
+          'selector' => '.epg-lightbox-arrow',
+        ],
+      ],
+      'inline' => true,
+      'small' => true,
+
+    ];
+
+
+
+
 
 
     // Example CSS

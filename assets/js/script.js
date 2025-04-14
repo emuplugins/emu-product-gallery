@@ -112,19 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    window.parent.addEventListener('click', () => {
-        const epgLightboxElement = document.querySelector('.epg-lightbox');
-    
-        if (epgLightboxElement) {
-            const isVisible = window.getComputedStyle(epgLightboxElement).display !== 'none';
-    
-            if (isVisible) {
-                toggleLightbox();
-            }
-        }
-
-    });
     
 });
 
