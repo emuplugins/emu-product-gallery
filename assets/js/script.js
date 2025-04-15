@@ -186,7 +186,7 @@ jQuery(function($) {
       const variationSlide = `
         <li class="splide__slide">
         <div class="image">
-          <img src="${imgSrc}" alt="${imgAlt}">
+          <img src="${imgSrc}" alt="${imgAlt}" style="width:100%a">
           </div>
         </li>`;
 
