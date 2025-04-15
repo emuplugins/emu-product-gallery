@@ -180,26 +180,24 @@ jQuery(function($) {
 
   $('form.variations_form').on('found_variation', function(event, variation) {
     if (variation && variation.image && variation.image.full_src) {
-      const imgSrc = variation.image.full_src;
+    const imgSrc = variation.image.full_src;
       const imgAlt = variation.image.alt || '';
-  
-      // Criação do slide com background-image
+
       const variationSlide = `
-        <li class="splide__slide" style="background-image: url('${imgSrc}') center center / cover no-repeat; width:100%; height:auto">
-          <div class="image" alt="${imgAlt}"><img src="${imgSrc}" alt="${imgAlt}" style="display:none"></div>
+        <li class="splide__slide">
+        <div class="image">
+          <img src="${imgSrc}" alt="${imgAlt}">
+          </div>
         </li>`;
-  
-      // Atualiza as galeria principais e miniaturas
+
       if (mainWrapper && thumbWrapper) {
         mainWrapper.innerHTML = variationSlide + originalMainGalleryHTML;
         thumbWrapper.innerHTML = variationSlide + originalThumbGalleryHTML;
       }
-  
-      // Re-monta a galeria
+
       mountEmuProductGallery();
     }
   });
-  
 
   $('form.variations_form').on('reset_data', function() {
     if (mainWrapper && thumbWrapper) {
