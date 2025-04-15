@@ -172,7 +172,7 @@ class Prefix_Element_Test extends \Bricks\Element {
         'type' => 'select',
         'options' => [
           'cover' => esc_html__( 'Cover', 'bricks' ),
-          '100% 100%' => esc_html__( 'Stretch', 'bricks' ),
+          'fill' => esc_html__( 'Stretch', 'bricks' ),
           'contain' => esc_html__( 'Contain', 'bricks' ),
         ],
         'css' => [
@@ -196,7 +196,7 @@ class Prefix_Element_Test extends \Bricks\Element {
         'type' => 'select',
         'options' => [
           'cover' => esc_html__( 'Cover', 'bricks' ),
-          '100% 100%' => esc_html__( 'Stretch', 'bricks' ),
+          'fill' => esc_html__( 'Stretch', 'bricks' ),
           'contain' => esc_html__( 'Contain', 'bricks' ),
         ],
         'css' => [

@@ -124,11 +124,11 @@ width: 100%;
 
 
 
-:is(lite-youtube, #emu-splide .splide__slide img){
+lite-youtube, #emu-splide .splide__slide img{
     background-position: center!important;
     background-repeat: no-repeat!important;
     background-size: 100% 100%;
-    object-fit: stretch;
+    object-fit: cover
 }
 
 /* ===============  LITE YOUTUBE  ================= */
