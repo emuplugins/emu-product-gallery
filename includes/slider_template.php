@@ -166,20 +166,28 @@ class emuProductGallery
             $html = '<img src="' . esc_url($attatchmenturl) . '" alt="Thumbnail">';
         }
     
-        if ($type === 'youtube') {
-            $video_url = $attatchmenturl;
-    
-            // Captura o ID do vídeo do YouTube
-            preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w\-]+)/', $video_url, $matches);
-            $video_id = $matches[1] ?? '';
-    
-            if ($video_id) {
-                $thumb_url = "https://img.youtube.com/vi/{$video_id}/maxresdefault.jpg";
-                $html = '<lite-youtube videoid="' . esc_attr($video_id) . '" poster="' . esc_url($thumb_url) . '" style="background:black;display:block;height:100%;" params="autoplay=1&rel=0"></lite-youtube>';
-            } else {
-                $html = '';
-            }
-        }
+      if ($type === 'youtube') {
+
+			$video_url = $attatchmenturl;
+
+			// Verifica se é uma URL direta da thumbnail
+			preg_match('~(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/)|img\.youtube\.com/vi/|i\.ytimg\.com/vi/)([^\/\?\&]+)~', $video_url, $matches);
+			$video_id = $matches[1] ?? '';
+
+			if ($video_id) {
+				// Se a URL original tiver "frame0", considera como short
+				if (strpos($video_url, 'frame0.jpg') !== false) {
+					$thumb_url = "https://i.ytimg.com/vi/{$video_id}/frame0.jpg";
+				} else {
+					$thumb_url = "https://img.youtube.com/vi/{$video_id}/maxresdefault.jpg";
+				}
+
+				// Gera o player com base no ID
+				$html = '<lite-youtube videoid="' . esc_attr($video_id) . '" poster="' . esc_url($thumb_url) . '" style="background:black;display:block;height:100%;" params="autoplay=1&rel=0"></lite-youtube>';
+			} else {
+				$html = '';
+			}
+		}
     
         return $html;
     }    
