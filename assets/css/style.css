@@ -148,9 +148,12 @@ lite-youtube {
     cursor: pointer;
     max-width: 100%;
     width:100%;
-    scale: 1.012;
+    transform: scale(1.12);
+    transform-origin: center;
+    will-change: transform;
+    image-rendering: auto;
+    backface-visibility: hidden;
 }
-
 /* gradient */
 lite-youtube::before {
     content: '';
