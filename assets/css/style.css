@@ -1,3 +1,7 @@
+.splide__slide{
+    overflow:hidden;
+}
+
 
 .emu-splide-wrapper{
     width:100%;
@@ -144,6 +148,7 @@ lite-youtube {
     cursor: pointer;
     max-width: 100%;
     width:100%;
+    scale: 1.012;
 }
 
 /* gradient */
