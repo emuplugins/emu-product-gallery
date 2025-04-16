@@ -2,7 +2,6 @@
 	overflow:hidden
 }
 
-
 .emu-splide-wrapper{
     width:100%;
     display: flex; gap: 20px;
@@ -148,11 +147,12 @@ lite-youtube {
     cursor: pointer;
     max-width: 100%;
     width:100%;
-    transform: scale(1.012);
+    transform: scale3d(1.012, 1.012, 1);
     transform-origin: left;
     will-change: transform;
     image-rendering: auto;
     backface-visibility: hidden;
+	overflow:hidden;
 }
 /* gradient */
 lite-youtube::before {
@@ -185,6 +185,7 @@ lite-youtube > iframe {
     top: 0;
     left: 0;
     border: 0;
+	margin-left: -2px;
 }
 
 /* play button */
