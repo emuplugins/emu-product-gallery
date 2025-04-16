@@ -276,7 +276,10 @@ function custom_add_embed_to_library(WP_REST_Request $request) {
         return $matches[1] ?? null;
     }
 
-    $url = esc_url_raw($request->get_param('oembed_url'));
+    $original_url = esc_url_raw($request->get_param('oembed_url'));
+	$parsed_url = parse_url($original_url);
+	$url = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $parsed_url['path'];
+
 
     if (!$url) {
         return new WP_Error('no_url', __('No URL provided.', 'oembed-in-library'), ['status' => 400]);
@@ -322,3 +325,4 @@ function custom_add_embed_to_library(WP_REST_Request $request) {
         'message' => __('Embed added to library.', 'oembed-in-library'),
     ];
 }
+
