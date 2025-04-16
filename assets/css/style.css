@@ -1,5 +1,5 @@
-.splide__slide{
-    overflow:hidden;
+.splide__slide:has(lite-youtube){
+	overflow:hidden
 }
 
 
@@ -149,7 +149,7 @@ lite-youtube {
     max-width: 100%;
     width:100%;
     transform: scale(1.012);
-    transform-origin: center;
+    transform-origin: left;
     will-change: transform;
     image-rendering: auto;
     backface-visibility: hidden;
