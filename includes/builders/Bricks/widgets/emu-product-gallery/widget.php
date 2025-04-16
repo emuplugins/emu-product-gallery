@@ -42,6 +42,29 @@ class Prefix_Element_Test extends \Bricks\Element {
       'type' => 'info',
     ];
 
+    // Example CSS
+    $this->controls['fullScreenButton'] = [
+      'tab' => 'content',
+      'group' => 'styles',
+      'label' => esc_html__( 'Full Screen', 'bricks' ),
+      'type' => 'select',
+      'options' => [
+        'block' => esc_html__( 'Show', 'bricks' ),
+        'none' => esc_html__( 'Hide', 'bricks' ),
+      ],
+      'css' => [
+        [
+          'property' => 'display',
+          'selector' => '.epg-lightbox-toogle',
+          'value' => '%s !important',
+        ],
+      ],
+      'inline' => true,
+      'placeholder' => esc_html__( 'Select', 'bricks' ),
+      'default' => 'block', // Option key
+    ];
+
+
     $this->controls['sliderHeight'] = [
       'tab' => 'content',
       'group' => 'styles',
