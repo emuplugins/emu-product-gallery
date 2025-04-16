@@ -196,6 +196,7 @@ EPGEmbedInLibrary::getInstance();
 // Claro que faremos isso em um filtro, pra previnir que o código seja executado muitas vezes
 
 // Galeria em modo Grid
+
 add_filter( 'wp_prepare_attachment_for_js', function( $response, $attachment ) {
 
     // Existem muitos arquivos de mídia, e por isso só deve ser
@@ -223,20 +224,45 @@ add_filter( 'wp_prepare_attachment_for_js', function( $response, $attachment ) {
 
 }, 10, 2 );
 
-// Galeria em modo Lista
 add_filter( 'wp_get_attachment_image_src', function( $image, $attachment_id, $size ) {
 
     $post = get_post( $attachment_id );
 
     if ( $post && $post->post_mime_type === 'oembed/external' ) {
         $thumb = get_post_meta( $attachment_id, '_oembed_thumbnail_url', true );
+
         if ( $thumb ) {
             return [
-                esc_url( $thumb ), // url da thumb externa
-                600,               // largura
-                400,               // altura
-                false              // is_intermediate
+                esc_url( $thumb ),
+                600,
+                400,
+                false
             ];
+        } else {
+            // Função local para extrair o ID do YouTube
+            if ( ! function_exists( 'get_youtube_id' ) ) {
+				function get_youtube_id( $url ) {
+					preg_match(
+						'~(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^\?&"\'<> #]+)~',
+						$url,
+						$matches
+					);
+					return $matches[1] ?? null;
+				}
+			}
+
+            $guid = get_post_field('guid', $attachment_id);
+            $youtube_id = get_youtube_id($guid);
+
+            if ( $youtube_id ) {
+                $thumbnail_url = "https://img.youtube.com/vi/{$youtube_id}/maxresdefault.jpg";
+                return [
+                    esc_url( $thumbnail_url ),
+                    600,
+                    400,
+                    false
+                ];
+            }
         }
     }
 
@@ -271,10 +297,16 @@ function custom_add_embed_to_library(WP_REST_Request $request) {
         return $oembed->get_data($url);
     }
 
-    function get_youtube_id($url) {
-        preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^\?&"\'<> #]+)/', $url, $matches);
-        return $matches[1] ?? null;
-    }
+    if ( ! function_exists( 'get_youtube_id' ) ) {
+		function get_youtube_id( $url ) {
+			preg_match(
+				'~(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^\?&"\'<> #]+)~',
+				$url,
+				$matches
+			);
+			return $matches[1] ?? null;
+		}
+	}
 
     $original_url = esc_url_raw($request->get_param('oembed_url'));
 	$parsed_url = parse_url($original_url);
@@ -315,14 +347,19 @@ function custom_add_embed_to_library(WP_REST_Request $request) {
     // Força o uso da thumbnail em alta resolução
     $video_id = get_youtube_id($url);
     if ($video_id) {
-        $thumbnail_url = "https://img.youtube.com/vi/{$video_id}/maxresdefault.jpg";
-        update_post_meta($post_id, '_oembed_thumbnail_url', esc_url_raw($thumbnail_url));
-    }
+		// Detecta se é um short
+		if (strpos($url, '/shorts/') !== false) {
+			$thumbnail_url = "https://i.ytimg.com/vi/{$video_id}/frame0.jpg";
+		} else {
+			$thumbnail_url = "https://img.youtube.com/vi/{$video_id}/maxresdefault.jpg";
+		}
 
+		update_post_meta($post_id, '_oembed_thumbnail_url', esc_url_raw($thumbnail_url));
+	}
+	
     return [
         'success' => true,
         'post_id' => $post_id,
         'message' => __('Embed added to library.', 'oembed-in-library'),
     ];
 }
-
