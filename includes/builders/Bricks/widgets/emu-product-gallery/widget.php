@@ -73,7 +73,7 @@ class Prefix_Element_Test extends \Bricks\Element {
       'css' => [
         [
           'property' => '--slider-height',
-          'value' => '%s !important',
+          'value' => '%spx !important',
         ],
       ],
       'units' => [
