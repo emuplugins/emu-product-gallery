@@ -357,6 +357,16 @@ function custom_add_embed_to_library(WP_REST_Request $request) {
 		update_post_meta($post_id, '_oembed_thumbnail_url', esc_url_raw($thumbnail_url));
 	}
 	
+	global $wpdb;
+	
+	$guid_value = esc_url_raw($thumbnail_url) . '?' . time();
+	
+	$wpdb->update(
+		$wpdb->posts,
+		['guid' => $guid_value],
+		['ID' => $post_id]
+	);
+	
     return [
         'success' => true,
         'post_id' => $post_id,
