@@ -148,7 +148,7 @@ lite-youtube {
     cursor: pointer;
     max-width: 100%;
     width:100%;
-    transform: scale(1.12);
+    transform: scale(1.012);
     transform-origin: center;
     will-change: transform;
     image-rendering: auto;
