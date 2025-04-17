@@ -165,11 +165,10 @@ function toggleLightbox() {
 
 
 
-let originalMainGalleryHTML = '';
-let originalThumbGalleryHTML = '';
-
 jQuery(function($) {
-  // Captura o HTML original assim que o DOM estiver pronto
+  let originalMainGalleryHTML = '';
+  let originalThumbGalleryHTML = '';
+
   const mainWrapper = document.querySelector('#emu-splide .splide__list');
   const thumbWrapper = document.querySelector('#emu-splide-thumbs .splide__list');
 
@@ -178,21 +177,56 @@ jQuery(function($) {
     originalThumbGalleryHTML = thumbWrapper.innerHTML;
   }
 
+  function getBaseSrc(src) {
+    if (!src) return '';
+    return src.replace(/-\d+x\d+(?=\.\.\w{3,4})/, '').replace(/-\d+x\d+(?=\.\w{3,4})/, '');
+  }
+
   $('form.variations_form').on('found_variation', function(event, variation) {
     if (variation && variation.image && variation.image.full_src) {
-    const imgSrc = variation.image.full_src;
+      const imgSrc = variation.image.full_src;
       const imgAlt = variation.image.alt || '';
+      const baseImgSrc = getBaseSrc(imgSrc);
+      let foundIndex = -1;
 
+      const slides = Array.from(mainWrapper.querySelectorAll('li.splide__slide'));
+      slides.forEach((slide, index) => {
+        let currentSrc = '';
+
+        // Primeiro tenta pegar do background-image
+        const bg = slide.style.backgroundImage;
+        if (bg && bg.includes('url')) {
+          currentSrc = bg.slice(5, -2); // remove url("...") -> pega apenas a URL
+        } else {
+          // Caso não tenha background, tenta pegar do <img>
+          const img = slide.querySelector('img');
+          if (img) {
+            currentSrc = img.getAttribute('src') || '';
+          }
+        }
+
+        if (getBaseSrc(currentSrc) === baseImgSrc) {
+          foundIndex = index;
+        }
+      });
+
+      if (foundIndex > -1 && mainInstance && typeof mainInstance.go === 'function') {
+        mainInstance.go(foundIndex);
+        return; // Já existe, apenas navega até o slide
+      }
+
+      // Se não encontrou, restaura e adiciona a imagem da variação no início
       const variationSlide = `
-        <li class="splide__slide">
-        <div class="image">
-          <img src="${imgSrc}" alt="${imgAlt}" style="width:100%">
-          </div>
+        <li class="splide__slide variation-slide" style="background: url('${imgSrc}') center center / cover no-repeat;">
+          <img src="${imgSrc}" alt="${imgAlt}" style="display: none;">
         </li>`;
 
       if (mainWrapper && thumbWrapper) {
-        mainWrapper.innerHTML = variationSlide + originalMainGalleryHTML;
-        thumbWrapper.innerHTML = variationSlide + originalThumbGalleryHTML;
+        mainWrapper.innerHTML = originalMainGalleryHTML;
+        thumbWrapper.innerHTML = originalThumbGalleryHTML;
+
+        mainWrapper.insertAdjacentHTML('afterbegin', variationSlide);
+        thumbWrapper.insertAdjacentHTML('afterbegin', variationSlide);
       }
 
       mountEmuProductGallery();
