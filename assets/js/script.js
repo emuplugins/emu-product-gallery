@@ -299,7 +299,7 @@ customElements.define('lite-youtube', LiteYTEmbed);
 
 
 
-if( ! Jquery) return;
+if (typeof jQuery === 'undefined') return;
 
 jQuery(function($) {
   let originalMainGalleryHTML = '';
