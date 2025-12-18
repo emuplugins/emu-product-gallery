@@ -25,7 +25,7 @@ add_action('wp_enqueue_scripts', function() {
     // register your plugin's CSS
     wp_register_style(
         'emu-product-gallery-style',
-        plugin_dir_url(EPG_DIR) . 'emu-product-gallery/assets/css/style.css',
+        plugin_dir_url(__FILE__) . 'emu-product-gallery/assets/css/style.css',
         [],
         rand() // gera uma versão aleatória
     );
@@ -39,7 +39,7 @@ add_action('wp_enqueue_scripts', function() {
 
     // register your plugin's JS
     wp_register_script('emu-product-gallery-script',
-    plugin_dir_url(EPG_DIR) . 'emu-product-gallery/assets/js/script.js',
+    plugin_dir_url(__FILE__) . 'emu-product-gallery/assets/js/script.js',
     array('epg-splide-script'),
     rand(),
     true);
